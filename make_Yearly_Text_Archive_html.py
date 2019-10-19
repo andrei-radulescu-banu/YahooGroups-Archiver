@@ -35,9 +35,10 @@ import cgi
 reload(sys)
 sys.setdefaultencoding('utf-8')
 
-def archiveYahooMessage(file, archiveFile, messageYear, format):
+def archiveYahooMessage(file, archiveDir, messageYear, format):
      try:
-          f = open(archiveFile, 'a')
+          archiveYear = archiveDir + '/archive-' + str(messageYear) + '.html'
+          f = open(archiveYear, 'a')
           if f.tell() == 0:
                f.write("<style>pre {white-space: pre-wrap;}</style>\n");
           f.write(loadYahooMessage(file, format))
@@ -78,7 +79,7 @@ def loadYahooMessage(file, format):
     messageText += '<br><br><br><br><br>' + "\n"
     return messageText
     
-def getYahooMessageMeta(file):
+def getYahooMessageYear(file):
     f1 = open(file,'r')
     fileContents=f1.read()
     f1.close()
@@ -127,10 +128,9 @@ if os.path.exists(groupName):
          os.makedirs(archiveDir)
     os.chdir(groupName)
     for file in natsorted(os.listdir(os.getcwd())):
-         messageYear = getYahooMessageMeta(file)
+         messageYear = getYahooMessageYear(file)
          if messageYear:
-              archiveFile = archiveDir + '/archive-' + str(messageYear) + '.html'
-              archiveYahooMessage(file, archiveFile, messageYear, 'utf-8')
+              archiveYahooMessage(file, archiveDir, messageYear, 'utf-8')
 else:
      sys.exit('Please run archive-group.py first')
 
