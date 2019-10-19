@@ -36,8 +36,8 @@ reload(sys)
 sys.setdefaultencoding('utf-8')
 
 OldThreads = {}
-MessageMeta = {}
-ThreadMeta = {}
+Messages = {}
+Threads = {}
 
 class MessageData:
      def __init__(self):
@@ -51,7 +51,7 @@ def archiveYahooMessage(fileName, archiveDir, messageYear, format):
      global OldThreads
 
      try:
-          archiveYear = archiveDir + '/archive-' + str(messageYear) + '.html'
+          archiveYear = archiveDir + '/oldarchive-' + str(messageYear) + '.html'
           threadsYear = archiveDir + '/oldthreads-' + str(messageYear) + '.html'
           
           messageId, messageSender, messageDateTime, messageSubject, messageText = loadYahooMessage(fileName, format)
@@ -89,7 +89,7 @@ def archiveYahooMessage(fileName, archiveDir, messageYear, format):
                OldThreads[archiveYear][thread] += 1
                threadsText += '&nbsp;&nbsp;' 
 
-          threadsText += '<a href="archive-{}.html#{}">'.format(messageYear, messageId) + cgi.escape(messageSubject) + '</a>, by ' 
+          threadsText += '<a href="oldarchive-{}.html#{}">'.format(messageYear, messageId) + cgi.escape(messageSubject) + '</a>, by ' 
           threadsText += cgi.escape(messageSender) + ' at ' 
           threadsText += cgi.escape(messageDateTime) + '<br>\n' 
                
@@ -130,7 +130,7 @@ def loadYahooMessage(fileName, format):
     messageText += '<br><br><br><br><br>' + "\n"
     return messageId, messageSender, messageDateTime, messageSubject, messageText
     
-def getYahooMessageMeta(fileName, format):
+def getYahooMessages(fileName, format):
     f1 = open(fileName,'r')
     fileContents=f1.read()
     f1.close()
@@ -190,38 +190,38 @@ if os.path.exists(groupName):
          os.makedirs(archiveDir)
     os.chdir(groupName)
     for fileName in natsorted(os.listdir(os.getcwd())):
-         messageId, messageSender, messageYear, messageSubject = getYahooMessageMeta(fileName, 'utf-8')
+         messageId, messageSender, messageYear, messageSubject = getYahooMessages(fileName, 'utf-8')
          if not messageId or not messageSender or not messageYear or messageYear== "1970" or not messageSubject:
               print('Yahoo Message: {} had an error (messageId={}, messageSender={}, messageYear={}, messageSubject={})'.format(fileName, messageId, messageSender, messageYear, messageSubject))
               continue
 
          # Save the message metadata
-         MessageMeta[messageId] = MessageData()
-         MessageMeta[messageId].messageSender = messageSender
-         MessageMeta[messageId].messageYear = messageYear
-         MessageMeta[messageId].messageSubject = messageSubject
-         MessageMeta[messageId].messageThread = messageId
-         MessageMeta[messageId].messageThreadNext = None
-         MessageMeta[messageId].messageThreadPrev = None
+         Messages[messageId] = MessageData()
+         Messages[messageId].messageSender = messageSender
+         Messages[messageId].messageYear = messageYear
+         Messages[messageId].messageSubject = messageSubject
+         Messages[messageId].messageThread = messageId
+         Messages[messageId].messageThreadNext = None
+         Messages[messageId].messageThreadPrev = None
 
-         if messageYear not in ThreadMeta:
-              ThreadMeta[messageYear]={}
+         if messageYear not in Threads:
+              Threads[messageYear]={}
 
-         for threadId in ThreadMeta[messageYear]:
-              if ThreadMeta[messageYear][threadId].messageSubject in messageSubject:
+         for threadId in Threads[messageYear]:
+              if Threads[messageYear][threadId].messageSubject in messageSubject:
                    # Chain this message at the end of the thread
-                   MessageMeta[messageId].messageThread = threadId
-                   tailId = ThreadMeta[messageYear][threadId].tailId
-                   MessageMeta[messageId].messageThreadPrev = tailId
-                   MessageMeta[tailId].messageThreadNext = messageId
-                   ThreadMeta[messageYear][threadId].tailId = messageId
+                   Messages[messageId].messageThread = threadId
+                   tailId = Threads[messageYear][threadId].tailId
+                   Messages[messageId].messageThreadPrev = tailId
+                   Messages[tailId].messageThreadNext = messageId
+                   Threads[messageYear][threadId].tailId = messageId
                    break
 
-         if MessageMeta[messageId].messageThread == messageId:
+         if Messages[messageId].messageThread == messageId:
               # Create new thread for this message
-              ThreadMeta[messageYear][messageId] = ThreadData()
-              ThreadMeta[messageYear][messageId].messageSubject = messageSubject
-              ThreadMeta[messageYear][messageId].tailId = messageId
+              Threads[messageYear][messageId] = ThreadData()
+              Threads[messageYear][messageId].messageSubject = messageSubject
+              Threads[messageYear][messageId].tailId = messageId
          
          archiveYahooMessage(fileName, archiveDir, messageYear, 'utf-8')
 else:
