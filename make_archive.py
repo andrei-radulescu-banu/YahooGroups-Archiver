@@ -35,7 +35,7 @@ import cgi
 reload(sys)
 sys.setdefaultencoding('utf-8')
 
-Threads = {}
+OldThreads = {}
 MessageMeta = {}
 ThreadMeta = {}
 
@@ -48,7 +48,7 @@ class ThreadData:
           pass
      
 def archiveYahooMessage(fileName, archiveDir, messageYear, format):
-     global Threads
+     global OldThreads
 
      try:
           archiveYear = archiveDir + '/archive-' + str(messageYear) + '.html'
@@ -70,11 +70,11 @@ def archiveYahooMessage(fileName, archiveDir, messageYear, format):
           print('Yahoo Message: {} archived to: archive-{}.html'.format(fileName, messageYear))
 
           # Update the threads file
-          if archiveYear not in Threads:
-               Threads[archiveYear]={}
+          if archiveYear not in OldThreads:
+               OldThreads[archiveYear]={}
 
           threadFound = False               
-          for thread in Threads[archiveYear]:
+          for thread in OldThreads[archiveYear]:
                if thread in messageSubject:
                     threadFound = True
 
@@ -84,9 +84,9 @@ def archiveYahooMessage(fileName, archiveDir, messageYear, format):
                     
           threadsText = ''
           if not threadFound:
-               Threads[archiveYear][messageSubject] = 1
+               OldThreads[archiveYear][messageSubject] = 1
           else:
-               Threads[archiveYear][thread] += 1
+               OldThreads[archiveYear][thread] += 1
                threadsText += '&nbsp;&nbsp;' 
 
           threadsText += '<a href="archive-{}.html#{}">'.format(messageYear, messageId) + cgi.escape(messageSubject) + '</a>, by ' 
