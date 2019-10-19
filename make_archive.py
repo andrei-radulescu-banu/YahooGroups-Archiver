@@ -99,6 +99,30 @@ def oldArchiveYahooMessage(fileName, archiveDir, messageYear, format):
      except Exception as e:
           print('Yahoo Message: {} had an error: {}'.format(filename, e))
 
+          
+def archiveYahooMessage(messageId, archiveDir, format):
+     try:
+          fileName = "{}.json".format(messageId)
+          archiveMessageFile = "{}/{}.html".format(archiveDir, messageId)
+          
+          messageId, messageSender, messageDateTime, messageSubject, messageText = loadYahooMessage(fileName, format)
+
+          if not messageText:
+               print('Yahoo Message: {} skipped'.format(fileName))
+               return
+
+          # Update the archive file
+          f = open(archiveMessageFile, 'a')
+          if f.tell() == 0:
+               f.write("<style>pre {white-space: pre-wrap;}</style>\n");
+          f.write(messageText)
+          f.close()
+          
+          print('Yahoo Message: {} archived to: {}.html'.format(fileName, messageId))               
+     except Exception as e:
+          print('Yahoo Message: {} had an error: {}'.format(filename, e))
+
+          
 def loadYahooMessage(fileName, format):
     f1 = open(fileName,'r')
     fileContents=f1.read()
@@ -223,10 +247,13 @@ if os.path.exists(groupName):
               Threads[messageYear][messageId].messageSubject = messageSubject
               Threads[messageYear][messageId].tailId = messageId
          
-         oldArchiveYahooMessage(fileName, archiveDir, messageYear, 'utf-8')
+         #oldArchiveYahooMessage(fileName, archiveDir, messageYear, 'utf-8')
+
+    for messageId in Messages:
+         archiveYahooMessage(messageId, archiveDir, 'utf-8')
 
 else:
-     sys.exit('Please run archive-group.py first')
+    sys.exit('Please run archive-group.py first')
 
 os.chdir(oldDir)
 print('Complete')
