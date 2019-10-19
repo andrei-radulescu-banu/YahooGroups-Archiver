@@ -66,11 +66,11 @@ def loadYahooMessage(file, format):
     messageBody = getEmailBody(message)
     
     messageText = '-----------------------------------------------------------------------------------<br>' + "\n"
-    messageText += 'Post ID:' + str(emailMessageID) + '<br>' + "\n"
-    messageText += 'Sender:' + cgi.escape(emailMessageSender) + '<br>' + "\n"
-    messageText += 'Post Date/Time:' + cgi.escape(emailMessageDateTime) + '<br>' + "\n"
-    messageText += 'Subject:' + cgi.escape(emailMessageSubject) + '<br>' + "\n"
-    messageText += 'Message:' + '<br><br>' + "\n"
+    messageText += 'Post ID: ' + str(emailMessageID) + '<br>' + "\n"
+    messageText += 'Sender: ' + cgi.escape(emailMessageSender) + '<br>' + "\n"
+    messageText += 'At: ' + cgi.escape(emailMessageDateTime) + '<br>' + "\n"
+    messageText += 'Subject: ' + cgi.escape(emailMessageSubject) + '<br>' + "\n"
+    messageText += '<br>' + "\n"
     messageText += messageBody
     messageText += '<br><br><br><br><br>' + "\n"
     return messageText
