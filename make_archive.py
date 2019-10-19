@@ -183,8 +183,11 @@ if os.path.exists(groupName):
     os.chdir(groupName)
     for file in natsorted(os.listdir(os.getcwd())):
          messageId, messageSender, messageYear, messageSubject = getYahooMessageMeta(file)
-         if messageYear:
-              archiveYahooMessage(file, archiveDir, messageYear, 'utf-8')
+         if not messageId or not messageSender or not messageYear or messageYear== "1970" or not messageSubject:
+              print 'Yahoo Message: ' + f + ' had an error:'
+              continue
+
+         archiveYahooMessage(file, archiveDir, messageYear, 'utf-8')
 else:
      sys.exit('Please run archive-group.py first')
 
