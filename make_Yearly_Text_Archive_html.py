@@ -38,7 +38,7 @@ sys.setdefaultencoding('utf-8')
 def archiveYahooMessage(file, archiveDir, messageYear, format):
      try:
           archiveYear = archiveDir + '/archive-' + str(messageYear) + '.html'
-          messageText = loadYahooMessage(file, format)
+          messageSender, messageSubject, messageText = loadYahooMessage(file, format)
 
           if not messageText:
                print 'Yahoo Message: ' + file + ' skipped'
@@ -61,7 +61,7 @@ def loadYahooMessage(file, format):
     jsonDoc = json.loads(fileContents)
     
     if 'ygData' not in jsonDoc:
-         return None
+         return None, None, none
     
     emailMessageID = jsonDoc['ygData']['msgId']
     emailMessageSender = HTMLParser.HTMLParser().unescape(jsonDoc['ygData']['from']).decode(format).encode('utf-8')
@@ -83,7 +83,7 @@ def loadYahooMessage(file, format):
     messageText += '</font>\n'
     messageText += messageBody
     messageText += '<br><br><br><br><br>' + "\n"
-    return messageText
+    return emailMessageSender, emailMessageSubject, messageText
     
 def getYahooMessageYear(file):
     f1 = open(file,'r')
