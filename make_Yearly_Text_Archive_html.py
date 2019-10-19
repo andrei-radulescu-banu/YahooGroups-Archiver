@@ -38,7 +38,7 @@ sys.setdefaultencoding('utf-8')
 def archiveYahooMessage(file, archiveDir, messageYear, format):
      try:
           archiveYear = archiveDir + '/archive-' + str(messageYear) + '.html'
-          messageSender, messageSubject, messageText = loadYahooMessage(file, format)
+          messageID, messageSender, messageSubject, messageText = loadYahooMessage(file, format)
 
           if not messageText:
                print 'Yahoo Message: ' + file + ' skipped'
@@ -61,29 +61,29 @@ def loadYahooMessage(file, format):
     jsonDoc = json.loads(fileContents)
     
     if 'ygData' not in jsonDoc:
-         return None, None, none
+         return None, None, None, None
     
-    emailMessageID = jsonDoc['ygData']['msgId']
-    emailMessageSender = HTMLParser.HTMLParser().unescape(jsonDoc['ygData']['from']).decode(format).encode('utf-8')
-    emailMessageTimeStamp = jsonDoc['ygData']['postDate']
-    emailMessageDateTime = datetime.fromtimestamp(float(emailMessageTimeStamp)).strftime('%Y-%m-%d %H:%M:%S')
-    emailMessageSubject = HTMLParser.HTMLParser().unescape(jsonDoc['ygData']['subject']).decode(format).encode('utf-8')
-    emailMessageString = HTMLParser.HTMLParser().unescape(jsonDoc['ygData']['rawEmail']).decode(format).encode('utf-8')
-    message = email.message_from_string(emailMessageString)
+    messageID = jsonDoc['ygData']['msgId']
+    messageSender = HTMLParser.HTMLParser().unescape(jsonDoc['ygData']['from']).decode(format).encode('utf-8')
+    messageTimeStamp = jsonDoc['ygData']['postDate']
+    messageDateTime = datetime.fromtimestamp(float(messageTimeStamp)).strftime('%Y-%m-%d %H:%M:%S')
+    messageSubject = HTMLParser.HTMLParser().unescape(jsonDoc['ygData']['subject']).decode(format).encode('utf-8')
+    messageString = HTMLParser.HTMLParser().unescape(jsonDoc['ygData']['rawEmail']).decode(format).encode('utf-8')
+    message = email.message_from_string(messageString)
     messageBody = getEmailBody(message)
 
     messageText =  ''
     messageText += '<font color="#0033cc">\n'
     messageText += '-----------------------------------------------------------------------------------<br>' + "\n"
-    messageText += 'Post ID: ' + str(emailMessageID) + '<a name=\"' + str(emailMessageID) + '\"></a><br>' + "\n"
-    messageText += 'Sender: ' + cgi.escape(emailMessageSender) + '<br>' + "\n"
-    messageText += 'At: ' + cgi.escape(emailMessageDateTime) + '<br>' + "\n"
-    messageText += 'Subject: ' + cgi.escape(emailMessageSubject) + '<br>' + "\n"
+    messageText += 'Post ID: ' + str(messageID) + '<a name=\"' + str(messageID) + '\"></a><br>' + "\n"
+    messageText += 'Sender: ' + cgi.escape(messageSender) + '<br>' + "\n"
+    messageText += 'At: ' + cgi.escape(messageDateTime) + '<br>' + "\n"
+    messageText += 'Subject: ' + cgi.escape(messageSubject) + '<br>' + "\n"
     messageText += '<br>' + "\n"
     messageText += '</font>\n'
     messageText += messageBody
     messageText += '<br><br><br><br><br>' + "\n"
-    return emailMessageSender, emailMessageSubject, messageText
+    return messageID, messageSender, messageSubject, messageText
     
 def getYahooMessageYear(file):
     f1 = open(file,'r')
@@ -92,8 +92,8 @@ def getYahooMessageYear(file):
     jsonDoc = json.loads(fileContents)
     if 'ygData' not in jsonDoc:
          return None
-    emailMessageTimeStamp = jsonDoc['ygData']['postDate']
-    return datetime.fromtimestamp(float(emailMessageTimeStamp)).year
+    messageTimeStamp = jsonDoc['ygData']['postDate']
+    return datetime.fromtimestamp(float(messageTimeStamp)).year
 
 # Thank you to the help in this forum for the bulk of this function
 # https://stackoverflow.com/questions/17874360/python-how-to-parse-the-body-from-a-raw-email-given-that-raw-email-does-not
