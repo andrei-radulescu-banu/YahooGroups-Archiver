@@ -105,7 +105,7 @@ def archiveYahooMessage(messageId, archiveDir, format):
           fileName = "{}.json".format(messageId)
           archiveMessageFile = "{}/{}.html".format(archiveDir, messageId)
           
-          messageId, messageSender, messageDateTime, messageSubject, messageText = loadYahooMessage(fileName, format)
+          messageText = loadYahooMessage(fileName, format)
 
           if not messageText:
                print('Yahoo Message: {} skipped'.format(fileName))
@@ -161,7 +161,7 @@ def loadYahooMessage(fileName, format):
     jsonDoc = json.loads(fileContents)
     
     if 'ygData' not in jsonDoc:
-         return None, None, None, None, None
+         return None
     
     messageId = jsonDoc['ygData']['msgId']
     messageSender = HTMLParser.HTMLParser().unescape(jsonDoc['ygData']['from']).decode(format).encode('utf-8')
@@ -174,8 +174,6 @@ def loadYahooMessage(fileName, format):
 
     messageText =  ''
     messageText += '<font color="#0033cc">\n'
-    messageText += '-----------------------------------------------------------------------------------<br>' + "\n"
-    messageText += 'Post ID: ' + str(messageId) + '<a name=\"' + str(messageId) + '\"></a><br>' + "\n"
     messageText += 'Sender: ' + cgi.escape(messageSender) + '<br>' + "\n"
     messageText += 'At: ' + cgi.escape(messageDateTime) + '<br>' + "\n"
     messageText += 'Subject: ' + cgi.escape(messageSubject) + '<br>' + "\n"
@@ -183,7 +181,7 @@ def loadYahooMessage(fileName, format):
     messageText += '</font>\n'
     messageText += messageBody
     messageText += '<br><br><br><br><br>' + "\n"
-    return messageId, messageSender, messageDateTime, messageSubject, messageText
+    return messageText
     
 def getYahooMessages(fileName, format):
     f1 = open(fileName,'r')
