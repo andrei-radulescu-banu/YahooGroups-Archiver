@@ -37,17 +37,17 @@ sys.setdefaultencoding('utf-8')
 
 Threads = {}
 
-def archiveYahooMessage(file, archiveDir, messageYear, format):
+def archiveYahooMessage(fileName, archiveDir, messageYear, format):
      global Threads
      
      try:
           archiveYear = archiveDir + '/archive-' + str(messageYear) + '.html'
           threadsYear = archiveDir + '/threads-' + str(messageYear) + '.html'
           
-          messageID, messageSender, messageDateTime, messageSubject, messageText = loadYahooMessage(file, format)
+          messageID, messageSender, messageDateTime, messageSubject, messageText = loadYahooMessage(fileName, format)
 
           if not messageText:
-               print 'Yahoo Message: ' + file + ' skipped'
+               print 'Yahoo Message: ' + fileName + ' skipped'
                return
 
           # Update the archive file
@@ -57,7 +57,7 @@ def archiveYahooMessage(file, archiveDir, messageYear, format):
           f.write(messageText)
           f.close()
           
-          print 'Yahoo Message: ' + file + ' archived to: archive-' + str(messageYear) + '.html'
+          print 'Yahoo Message: ' + fileName + ' archived to: archive-' + str(messageYear) + '.html'
 
           # Update the threads file
           if archiveYear not in Threads:
@@ -87,11 +87,11 @@ def archiveYahooMessage(file, archiveDir, messageYear, format):
           f.close()
                
      except Exception as e:
-          print 'Yahoo Message: ' + file + ' had an error:'
+          print 'Yahoo Message: ' + fileName + ' had an error:'
           print e
 
-def loadYahooMessage(file, format):
-    f1 = open(file,'r')
+def loadYahooMessage(fileName, format):
+    f1 = open(fileName,'r')
     fileContents=f1.read()
     f1.close()
     jsonDoc = json.loads(fileContents)
@@ -121,8 +121,8 @@ def loadYahooMessage(file, format):
     messageText += '<br><br><br><br><br>' + "\n"
     return messageID, messageSender, messageDateTime, messageSubject, messageText
     
-def getYahooMessageMeta(file):
-    f1 = open(file,'r')
+def getYahooMessageMeta(fileName):
+    f1 = open(fileName,'r')
     fileContents=f1.read()
     f1.close()
 
@@ -138,7 +138,7 @@ def getYahooMessageMeta(file):
          
          return messageId, messageSender, datetime.fromtimestamp(float(messageTimeStamp)).year, messageSubject
     except Exception as e:
-         print 'Yahoo Message: ' + file + ' had an error:'
+         print 'Yahoo Message: ' + fileName + ' had an error:'
          print e
 
     return None
@@ -181,13 +181,13 @@ if os.path.exists(groupName):
     if not os.path.exists(archiveDir):
          os.makedirs(archiveDir)
     os.chdir(groupName)
-    for file in natsorted(os.listdir(os.getcwd())):
-         messageId, messageSender, messageYear, messageSubject = getYahooMessageMeta(file)
+    for fileName in natsorted(os.listdir(os.getcwd())):
+         messageId, messageSender, messageYear, messageSubject = getYahooMessageMeta(fileName)
          if not messageId or not messageSender or not messageYear or messageYear== "1970" or not messageSubject:
               print 'Yahoo Message: ' + f + ' had an error:'
               continue
 
-         archiveYahooMessage(file, archiveDir, messageYear, 'utf-8')
+         archiveYahooMessage(fileName, archiveDir, messageYear, 'utf-8')
 else:
      sys.exit('Please run archive-group.py first')
 
