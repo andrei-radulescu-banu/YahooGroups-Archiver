@@ -49,7 +49,7 @@ def archiveYahooMessage(fileName, archiveDir, messageYear, format):
           messageId, messageSender, messageDateTime, messageSubject, messageText = loadYahooMessage(fileName, format)
 
           if not messageText:
-               print('Yahoo Message: ' + fileName + ' skipped')
+               print('Yahoo Message: {} skipped'.format(fileName))
                return
 
           # Update the archive file
@@ -59,7 +59,7 @@ def archiveYahooMessage(fileName, archiveDir, messageYear, format):
           f.write(messageText)
           f.close()
           
-          print('Yahoo Message: ' + fileName + ' archived to: archive-' + str(messageYear) + '.html')
+          print('Yahoo Message: {} archived to: archive-{}.html'.format(fileName, messageYear))
 
           # Update the threads file
           if archiveYear not in Threads:
@@ -89,8 +89,7 @@ def archiveYahooMessage(fileName, archiveDir, messageYear, format):
           f.close()
                
      except Exception as e:
-          print('Yahoo Message: ' + fileName + ' had an error:')
-          print(e)
+          print('Yahoo Message: {} had an error: {}'.format(filename, e))
 
 def loadYahooMessage(fileName, format):
     f1 = open(fileName,'r')
@@ -140,8 +139,7 @@ def getYahooMessageMeta(fileName, format):
          
          return messageId, messageSender, datetime.fromtimestamp(float(messageTimeStamp)).year, messageSubject
     except Exception as e:
-         print('Yahoo Message: ' + fileName + ' had an error:')
-         print(e)
+         print('Yahoo Message: {} had an error: {}'.format(fileName, e))
 
     return None, None, None, None
 
@@ -186,7 +184,7 @@ if os.path.exists(groupName):
     for fileName in natsorted(os.listdir(os.getcwd())):
          messageId, messageSender, messageYear, messageSubject = getYahooMessageMeta(fileName, 'utf-8')
          if not messageId or not messageSender or not messageYear or messageYear== "1970" or not messageSubject:
-              print('Yahoo Message: ' + fileName + ' had an error (messageId={}, messageSender={}, messageYear={}, messageSubject={})'.format(messageId, messageSender, messageYear, messageSubject))
+              print('Yahoo Message: {} had an error (messageId={}, messageSender={}, messageYear={}, messageSubject={})'.format(fileName, messageId, messageSender, messageYear, messageSubject))
               continue
          
          archiveYahooMessage(fileName, archiveDir, messageYear, 'utf-8')
