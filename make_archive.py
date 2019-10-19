@@ -130,8 +130,13 @@ def getYahooMessageMeta(file):
          jsonDoc = json.loads(fileContents)
          if 'ygData' not in jsonDoc or 'postDate' not in jsonDoc['ygData']:
               return None
+
+         messageID = jsonDoc['ygData']['msgId']
+         messageSender = HTMLParser.HTMLParser().unescape(jsonDoc['ygData']['from']).decode(format).encode('utf-8')
          messageTimeStamp = jsonDoc['ygData']['postDate']
-         return datetime.fromtimestamp(float(messageTimeStamp)).year
+         messageSubject = HTMLParser.HTMLParser().unescape(jsonDoc['ygData']['subject']).decode(format).encode('utf-8')
+         
+         return messageId, messageSender, datetime.fromtimestamp(float(messageTimeStamp)).year, messageSubject
     except Exception as e:
          print 'Yahoo Message: ' + file + ' had an error:'
          print e
@@ -177,7 +182,7 @@ if os.path.exists(groupName):
          os.makedirs(archiveDir)
     os.chdir(groupName)
     for file in natsorted(os.listdir(os.getcwd())):
-         messageYear = getYahooMessageMeta(file)
+         messageId, messageSender, messageYear, messageSubject = getYahooMessageMeta(file)
          if messageYear:
               archiveYahooMessage(file, archiveDir, messageYear, 'utf-8')
 else:
