@@ -35,21 +35,51 @@ import cgi
 reload(sys)
 sys.setdefaultencoding('utf-8')
 
+Threads = {}
+
 def archiveYahooMessage(file, archiveDir, messageYear, format):
+     global Threads
+     
      try:
           archiveYear = archiveDir + '/archive-' + str(messageYear) + '.html'
+          threadsYear = archiveDir + '/threads-' + str(messageYear) + '.html'
+          
           messageID, messageSender, messageSubject, messageText = loadYahooMessage(file, format)
 
           if not messageText:
                print 'Yahoo Message: ' + file + ' skipped'
                return
-          
+
+          # Update the archive file
           f = open(archiveYear, 'a')
           if f.tell() == 0:
                f.write("<style>pre {white-space: pre-wrap;}</style>\n");
           f.write(messageText)
           f.close()
+          
           print 'Yahoo Message: ' + file + ' archived to: archive-' + str(messageYear) + '.html'
+
+          # Update the threads file
+          if archiveYear not in Threads:
+               Threads[archiveYear]={}
+
+          threadFound = False               
+          for thread in Threads[archiveYear]:
+               if thread.find(messageSubject):
+                    threadFound = True
+
+          f = open(threadsYear, 'a')
+          if f.tell() == 0:
+               f.write("<style>pre {white-space: pre-wrap;}</style>\n");
+                    
+          if not threadFound:
+               Threads[archiveYear][messageSubject] = 1
+          else:
+               Threads[archiveYear][thread] += 1
+
+          #f.write(messageText)
+          f.close()
+               
      except Exception as e:
           print 'Yahoo Message: ' + file + ' had an error:'
           print e
