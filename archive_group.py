@@ -18,8 +18,8 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 '''
 
-cookie_T = 'COOKIE_T_DATA_GOES_HERE'
-cookie_Y = 'COOKIE_Y_DATA_GOES_HERE'
+cookie_T = 'z=aGKpdBaaxtdBJy91N0c3.ILNDA3MQY1NzUxMzQwMk42&a=QAE&sk=DAAYWFHfjafE8a&ks=EAAeyschNAxKtyUeVckq8ENxA--~G&kt=EAAXo_5PUuzXX6MDupT6nMpUQ--~I&ku=FAAwbvFr1WUUTKGlmcyZjMSnpl.OgOjZv0wE7vby1Ehb5EB8bh1tKxNsXApBD_4Kvaq6NLts3Y.lv5Jrsjh6PnU63I6chKH8JhhQdnTa3DStWlh8qE8t39hJ2PxBsAnv2uzSs7cZ.3lcakHJjmgvugyapEJLXx270abx9Xx.ZNtD.o-~A&d=bnMBeWFob28BZwFXS1hKNjc0SUZFT0ZCVDZKSVA1RDdaWk5GTQFzbAFNemN3TmdFeU1ESTJORE0zTlRreAFhAVFBRQFhYwFBQUpWQXN5UAFsYXQBYUdLcGRCAWNzAQFzYwFkZXNrdG9wX3dlYgFmcwFSbV9FM3dKYzg4ankBenoBYUdLcGRCQTdF&af=JnRzPTE1NzEwNzAzNjImcHM9amZfb2FNTDBXRl9FdS5YNlRnWEV5QS0t'
+cookie_Y = 'v=1&n=452hhcvqk6abl&l=8k1820s/o&p=m26022r00000000&r=92&intl=us'
 
 import json #required for reading various JSON attributes from the content
 import requests #required for fetching the raw messages

@@ -52,6 +52,10 @@ def loadYahooMessage(file, format):
     fileContents=f1.read()
     f1.close()
     jsonDoc = json.loads(fileContents)
+    
+    if 'ygData' not in jsonDoc:
+         return ''
+    
     emailMessageID = jsonDoc['ygData']['msgId']
     emailMessageSender = HTMLParser.HTMLParser().unescape(jsonDoc['ygData']['from']).decode(format).encode('utf-8')
     emailMessageTimeStamp = jsonDoc['ygData']['postDate']
@@ -76,6 +80,8 @@ def getYahooMessageYear(file):
     fileContents=f1.read()
     f1.close()
     jsonDoc = json.loads(fileContents)
+    if 'ygData' not in jsonDoc:
+         return ""
     emailMessageTimeStamp = jsonDoc['ygData']['postDate']
     return datetime.fromtimestamp(float(emailMessageTimeStamp)).year
 
