@@ -44,7 +44,7 @@ def archiveYahooMessage(file, archiveDir, messageYear, format):
           archiveYear = archiveDir + '/archive-' + str(messageYear) + '.html'
           threadsYear = archiveDir + '/threads-' + str(messageYear) + '.html'
           
-          messageID, messageSender, messageSubject, messageText = loadYahooMessage(file, format)
+          messageID, messageSender, messageDateTime, messageSubject, messageText = loadYahooMessage(file, format)
 
           if not messageText:
                print 'Yahoo Message: ' + file + ' skipped'
@@ -65,19 +65,25 @@ def archiveYahooMessage(file, archiveDir, messageYear, format):
 
           threadFound = False               
           for thread in Threads[archiveYear]:
-               if thread.find(messageSubject):
+               if thread in messageSubject:
                     threadFound = True
 
           f = open(threadsYear, 'a')
           if f.tell() == 0:
                f.write("<style>pre {white-space: pre-wrap;}</style>\n");
                     
+          threadsText = ''
           if not threadFound:
                Threads[archiveYear][messageSubject] = 1
           else:
                Threads[archiveYear][thread] += 1
+               threadsText += '&nbsp;&nbsp;' 
 
-          #f.write(messageText)
+          threadsText += '<a href="archive-{}.html#{}">'.format(messageYear, messageID) + cgi.escape(messageSubject) + '</a>, by ' 
+          threadsText += cgi.escape(messageSender) + ' at ' 
+          threadsText += cgi.escape(messageDateTime) + '<br>\n' 
+               
+          f.write(threadsText)
           f.close()
                
      except Exception as e:
@@ -91,7 +97,7 @@ def loadYahooMessage(file, format):
     jsonDoc = json.loads(fileContents)
     
     if 'ygData' not in jsonDoc:
-         return None, None, None, None
+         return None, None, None, None, None
     
     messageID = jsonDoc['ygData']['msgId']
     messageSender = HTMLParser.HTMLParser().unescape(jsonDoc['ygData']['from']).decode(format).encode('utf-8')
@@ -113,7 +119,7 @@ def loadYahooMessage(file, format):
     messageText += '</font>\n'
     messageText += messageBody
     messageText += '<br><br><br><br><br>' + "\n"
-    return messageID, messageSender, messageSubject, messageText
+    return messageID, messageSender, messageDateTime, messageSubject, messageText
     
 def getYahooMessageYear(file):
     f1 = open(file,'r')
