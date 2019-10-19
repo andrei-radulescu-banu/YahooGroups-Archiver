@@ -68,7 +68,7 @@ def loadYahooMessage(file, format):
     messageText =  ''
     messageText += '<font color="#0033cc">\n'
     messageText += '-----------------------------------------------------------------------------------<br>' + "\n"
-    messageText += 'Post ID: ' + str(emailMessageID) + '<br>' + "\n"
+    messageText += 'Post ID: ' + str(emailMessageID) + '<a name=\"' + str(emailMessageID) + '\"></a><br>' + "\n"
     messageText += 'Sender: ' + cgi.escape(emailMessageSender) + '<br>' + "\n"
     messageText += 'At: ' + cgi.escape(emailMessageDateTime) + '<br>' + "\n"
     messageText += 'Subject: ' + cgi.escape(emailMessageSubject) + '<br>' + "\n"
@@ -78,13 +78,13 @@ def loadYahooMessage(file, format):
     messageText += '<br><br><br><br><br>' + "\n"
     return messageText
     
-def getYahooMessageYear(file):
+def getYahooMessageMeta(file):
     f1 = open(file,'r')
     fileContents=f1.read()
     f1.close()
     jsonDoc = json.loads(fileContents)
     if 'ygData' not in jsonDoc:
-         return ""
+         return None
     emailMessageTimeStamp = jsonDoc['ygData']['postDate']
     return datetime.fromtimestamp(float(emailMessageTimeStamp)).year
 
@@ -127,7 +127,7 @@ if os.path.exists(groupName):
          os.makedirs(archiveDir)
     os.chdir(groupName)
     for file in natsorted(os.listdir(os.getcwd())):
-         messageYear = getYahooMessageYear(file)
+         messageYear = getYahooMessageMeta(file)
          if messageYear:
               archiveFile = archiveDir + '/archive-' + str(messageYear) + '.html'
               archiveYahooMessage(file, archiveFile, messageYear, 'utf-8')
