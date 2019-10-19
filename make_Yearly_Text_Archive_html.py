@@ -64,13 +64,16 @@ def loadYahooMessage(file, format):
     emailMessageString = HTMLParser.HTMLParser().unescape(jsonDoc['ygData']['rawEmail']).decode(format).encode('utf-8')
     message = email.message_from_string(emailMessageString)
     messageBody = getEmailBody(message)
-    
-    messageText = '-----------------------------------------------------------------------------------<br>' + "\n"
+
+    messageText =  ''
+    messageText += '<font color="#0033cc">\n'
+    messageText += '-----------------------------------------------------------------------------------<br>' + "\n"
     messageText += 'Post ID: ' + str(emailMessageID) + '<br>' + "\n"
     messageText += 'Sender: ' + cgi.escape(emailMessageSender) + '<br>' + "\n"
     messageText += 'At: ' + cgi.escape(emailMessageDateTime) + '<br>' + "\n"
     messageText += 'Subject: ' + cgi.escape(emailMessageSubject) + '<br>' + "\n"
     messageText += '<br>' + "\n"
+    messageText += '</font>\n'
     messageText += messageBody
     messageText += '<br><br><br><br><br>' + "\n"
     return messageText
