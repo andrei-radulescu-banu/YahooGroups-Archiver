@@ -54,7 +54,7 @@ def oldArchiveYahooMessage(fileName, archiveDir, messageYear, format):
           archiveYear = archiveDir + '/oldarchive-' + str(messageYear) + '.html'
           threadsYear = archiveDir + '/oldthreads-' + str(messageYear) + '.html'
           
-          messageId, messageSender, messageDateTime, messageSubject, messageText = loadYahooMessage(fileName, format)
+          messageId, messageSender, messageDateTime, messageSubject, messageText = oldLoadYahooMessage(fileName, format)
 
           if not messageText:
                print('Yahoo Message: {} skipped'.format(fileName))
@@ -123,6 +123,37 @@ def archiveYahooMessage(messageId, archiveDir, format):
           print('Yahoo Message: {} had an error: {}'.format(filename, e))
 
           
+def oldLoadYahooMessage(fileName, format):
+    f1 = open(fileName,'r')
+    fileContents=f1.read()
+    f1.close()
+    jsonDoc = json.loads(fileContents)
+    
+    if 'ygData' not in jsonDoc:
+         return None, None, None, None, None
+    
+    messageId = jsonDoc['ygData']['msgId']
+    messageSender = HTMLParser.HTMLParser().unescape(jsonDoc['ygData']['from']).decode(format).encode('utf-8')
+    messageTimeStamp = jsonDoc['ygData']['postDate']
+    messageDateTime = datetime.fromtimestamp(float(messageTimeStamp)).strftime('%Y-%m-%d %H:%M:%S')
+    messageSubject = HTMLParser.HTMLParser().unescape(jsonDoc['ygData']['subject']).decode(format).encode('utf-8')
+    messageString = HTMLParser.HTMLParser().unescape(jsonDoc['ygData']['rawEmail']).decode(format).encode('utf-8')
+    message = email.message_from_string(messageString)
+    messageBody = getEmailBody(message)
+
+    messageText =  ''
+    messageText += '<font color="#0033cc">\n'
+    messageText += '-----------------------------------------------------------------------------------<br>' + "\n"
+    messageText += 'Post ID: ' + str(messageId) + '<a name=\"' + str(messageId) + '\"></a><br>' + "\n"
+    messageText += 'Sender: ' + cgi.escape(messageSender) + '<br>' + "\n"
+    messageText += 'At: ' + cgi.escape(messageDateTime) + '<br>' + "\n"
+    messageText += 'Subject: ' + cgi.escape(messageSubject) + '<br>' + "\n"
+    messageText += '<br>' + "\n"
+    messageText += '</font>\n'
+    messageText += messageBody
+    messageText += '<br><br><br><br><br>' + "\n"
+    return messageId, messageSender, messageDateTime, messageSubject, messageText
+    
 def loadYahooMessage(fileName, format):
     f1 = open(fileName,'r')
     fileContents=f1.read()
