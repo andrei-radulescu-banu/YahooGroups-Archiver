@@ -40,6 +40,10 @@ def archiveYahooMessage(file, archiveDir, messageYear, format):
           archiveYear = archiveDir + '/archive-' + str(messageYear) + '.html'
           messageText = loadYahooMessage(file, format)
 
+          if not messageText:
+               print 'Yahoo Message: ' + file + ' skipped'
+               return
+          
           f = open(archiveYear, 'a')
           if f.tell() == 0:
                f.write("<style>pre {white-space: pre-wrap;}</style>\n");
@@ -57,7 +61,7 @@ def loadYahooMessage(file, format):
     jsonDoc = json.loads(fileContents)
     
     if 'ygData' not in jsonDoc:
-         return ''
+         return None
     
     emailMessageID = jsonDoc['ygData']['msgId']
     emailMessageSender = HTMLParser.HTMLParser().unescape(jsonDoc['ygData']['from']).decode(format).encode('utf-8')
