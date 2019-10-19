@@ -47,7 +47,7 @@ class ThreadData:
      def __init__(self):
           pass
      
-def archiveYahooMessage(fileName, archiveDir, messageYear, format):
+def oldArchiveYahooMessage(fileName, archiveDir, messageYear, format):
      global OldThreads
 
      try:
@@ -223,7 +223,8 @@ if os.path.exists(groupName):
               Threads[messageYear][messageId].messageSubject = messageSubject
               Threads[messageYear][messageId].tailId = messageId
          
-         archiveYahooMessage(fileName, archiveDir, messageYear, 'utf-8')
+         oldArchiveYahooMessage(fileName, archiveDir, messageYear, 'utf-8')
+
 else:
      sys.exit('Please run archive-group.py first')
 
