@@ -38,10 +38,12 @@ sys.setdefaultencoding('utf-8')
 def archiveYahooMessage(file, archiveDir, messageYear, format):
      try:
           archiveYear = archiveDir + '/archive-' + str(messageYear) + '.html'
+          messageText = loadYahooMessage(file, format)
+
           f = open(archiveYear, 'a')
           if f.tell() == 0:
                f.write("<style>pre {white-space: pre-wrap;}</style>\n");
-          f.write(loadYahooMessage(file, format))
+          f.write(messageText)
           f.close()
           print 'Yahoo Message: ' + file + ' archived to: archive-' + str(messageYear) + '.html'
      except Exception as e:
