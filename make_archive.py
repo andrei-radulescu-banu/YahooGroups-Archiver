@@ -131,7 +131,7 @@ def getYahooMessageMeta(fileName):
     try:
          jsonDoc = json.loads(fileContents)
          if 'ygData' not in jsonDoc or 'postDate' not in jsonDoc['ygData']:
-              return None
+              return None, None, None, None
 
          messageID = jsonDoc['ygData']['msgId']
          messageSender = HTMLParser.HTMLParser().unescape(jsonDoc['ygData']['from']).decode(format).encode('utf-8')
@@ -143,7 +143,7 @@ def getYahooMessageMeta(fileName):
          print 'Yahoo Message: ' + fileName + ' had an error:'
          print e
 
-    return None
+    return None, None, None, None
 
 # Thank you to the help in this forum for the bulk of this function
 # https://stackoverflow.com/questions/17874360/python-how-to-parse-the-body-from-a-raw-email-given-that-raw-email-does-not
@@ -186,7 +186,7 @@ if os.path.exists(groupName):
     for fileName in natsorted(os.listdir(os.getcwd())):
          messageId, messageSender, messageYear, messageSubject = getYahooMessageMeta(fileName)
          if not messageId or not messageSender or not messageYear or messageYear== "1970" or not messageSubject:
-              print 'Yahoo Message: ' + f + ' had an error:'
+              print 'Yahoo Message: ' + fileName + ' had an error:'
               continue
          
          # Save the message metadata
