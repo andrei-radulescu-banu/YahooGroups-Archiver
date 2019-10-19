@@ -126,7 +126,7 @@ def getYahooMessageYear(file):
     fileContents=f1.read()
     f1.close()
     jsonDoc = json.loads(fileContents)
-    if 'ygData' not in jsonDoc:
+    if 'ygData' not in jsonDoc or 'postDate' not in jsonDoc['ygData']:
          return None
     messageTimeStamp = jsonDoc['ygData']['postDate']
     return datetime.fromtimestamp(float(messageTimeStamp)).year
