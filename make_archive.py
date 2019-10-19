@@ -39,6 +39,14 @@ Threads = {}
 MessageMeta = {}
 ThreadMeta = {}
 
+class MessageData:
+     def __init__(self):
+          pass
+
+class ThreadData:
+     def __init__(self):
+          pass
+     
 def archiveYahooMessage(fileName, archiveDir, messageYear, format):
      global Threads
 
@@ -186,6 +194,34 @@ if os.path.exists(groupName):
          if not messageId or not messageSender or not messageYear or messageYear== "1970" or not messageSubject:
               print('Yahoo Message: {} had an error (messageId={}, messageSender={}, messageYear={}, messageSubject={})'.format(fileName, messageId, messageSender, messageYear, messageSubject))
               continue
+
+         # Save the message metadata
+         MessageMeta[messageId] = MessageData()
+         MessageMeta[messageId].messageSender = messageSender
+         MessageMeta[messageId].messageYear = messageYear
+         MessageMeta[messageId].messageSubject = messageSubject
+         MessageMeta[messageId].messageThread = messageId
+         MessageMeta[messageId].messageThreadNext = None
+         MessageMeta[messageId].messageThreadPrev = None
+
+         if messageYear not in ThreadMeta:
+              ThreadMeta[messageYear]={}
+
+         for threadId in ThreadMeta[messageYear]:
+              if ThreadMeta[messageYear][threadId].messageSubject in messageSubject:
+                   # Chain this message at the end of the thread
+                   MessageMeta[messageId].messageThread = threadId
+                   tailId = ThreadMeta[messageYear][threadId].tailId
+                   MessageMeta[messageId].messageThreadPrev = tailId
+                   MessageMeta[tailId].messageThreadNext = messageId
+                   ThreadMeta[messageYear][threadId].tailId = messageId
+                   break
+
+         if MessageMeta[messageId].messageThread == messageId:
+              # Create new thread for this message
+              ThreadMeta[messageYear][messageId] = ThreadData()
+              ThreadMeta[messageYear][messageId].messageSubject = messageSubject
+              ThreadMeta[messageYear][messageId].tailId = messageId
          
          archiveYahooMessage(fileName, archiveDir, messageYear, 'utf-8')
 else:
