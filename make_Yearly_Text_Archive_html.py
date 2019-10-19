@@ -125,11 +125,18 @@ def getYahooMessageYear(file):
     f1 = open(file,'r')
     fileContents=f1.read()
     f1.close()
-    jsonDoc = json.loads(fileContents)
-    if 'ygData' not in jsonDoc or 'postDate' not in jsonDoc['ygData']:
-         return None
-    messageTimeStamp = jsonDoc['ygData']['postDate']
-    return datetime.fromtimestamp(float(messageTimeStamp)).year
+
+    try:
+         jsonDoc = json.loads(fileContents)
+         if 'ygData' not in jsonDoc or 'postDate' not in jsonDoc['ygData']:
+              return None
+         messageTimeStamp = jsonDoc['ygData']['postDate']
+         return datetime.fromtimestamp(float(messageTimeStamp)).year
+    except Exception as e:
+         print 'Yahoo Message: ' + file + ' had an error:'
+         print e
+
+    return None
 
 # Thank you to the help in this forum for the bulk of this function
 # https://stackoverflow.com/questions/17874360/python-how-to-parse-the-body-from-a-raw-email-given-that-raw-email-does-not
