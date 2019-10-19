@@ -121,7 +121,7 @@ def loadYahooMessage(file, format):
     messageText += '<br><br><br><br><br>' + "\n"
     return messageID, messageSender, messageDateTime, messageSubject, messageText
     
-def getYahooMessageYear(file):
+def getYahooMessageMeta(file):
     f1 = open(file,'r')
     fileContents=f1.read()
     f1.close()
@@ -177,7 +177,7 @@ if os.path.exists(groupName):
          os.makedirs(archiveDir)
     os.chdir(groupName)
     for file in natsorted(os.listdir(os.getcwd())):
-         messageYear = getYahooMessageYear(file)
+         messageYear = getYahooMessageMeta(file)
          if messageYear:
               archiveYahooMessage(file, archiveDir, messageYear, 'utf-8')
 else:
