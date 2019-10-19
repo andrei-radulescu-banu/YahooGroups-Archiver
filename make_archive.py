@@ -41,7 +41,7 @@ ThreadMeta = {}
 
 def archiveYahooMessage(fileName, archiveDir, messageYear, format):
      global Threads
-     
+
      try:
           archiveYear = archiveDir + '/archive-' + str(messageYear) + '.html'
           threadsYear = archiveDir + '/oldthreads-' + str(messageYear) + '.html'
@@ -123,7 +123,7 @@ def loadYahooMessage(fileName, format):
     messageText += '<br><br><br><br><br>' + "\n"
     return messageID, messageSender, messageDateTime, messageSubject, messageText
     
-def getYahooMessageMeta(fileName):
+def getYahooMessageMeta(fileName, format):
     f1 = open(fileName,'r')
     fileContents=f1.read()
     f1.close()
@@ -133,7 +133,7 @@ def getYahooMessageMeta(fileName):
          if 'ygData' not in jsonDoc or 'postDate' not in jsonDoc['ygData']:
               return None, None, None, None
 
-         messageID = jsonDoc['ygData']['msgId']
+         messageId = jsonDoc['ygData']['msgId']
          messageSender = HTMLParser.HTMLParser().unescape(jsonDoc['ygData']['from']).decode(format).encode('utf-8')
          messageTimeStamp = jsonDoc['ygData']['postDate']
          messageSubject = HTMLParser.HTMLParser().unescape(jsonDoc['ygData']['subject']).decode(format).encode('utf-8')
@@ -184,37 +184,11 @@ if os.path.exists(groupName):
          os.makedirs(archiveDir)
     os.chdir(groupName)
     for fileName in natsorted(os.listdir(os.getcwd())):
-         messageId, messageSender, messageYear, messageSubject = getYahooMessageMeta(fileName)
+         messageId, messageSender, messageYear, messageSubject = getYahooMessageMeta(fileName, 'utf-8')
          if not messageId or not messageSender or not messageYear or messageYear== "1970" or not messageSubject:
-              print 'Yahoo Message: ' + fileName + ' had an error:'
+              print('Yahoo Message: ' + fileName + ' had an error (messageId={}, messageSender={}, messageYear={}, messageSubject={})'.format(messageId, messageSender, messageYear, messageSubject))
               continue
          
-         # Save the message metadata
-         MessageMeta[messageId].messageSender = messageSender
-         MessageMeta[messageId].messageYear = messageYear
-         MessageMeta[messageId].messageSubject = messageSubject
-         MessageMeta[messageId].messageThread = messageId
-         MessageMeta[messageId].messageThreadNext = None
-         MessageMeta[messageId].messageThreadPrev = None
-
-         if messageYear not in ThreadMeta:
-              ThreadMeta[messageYear]={}
-
-         for threadId in ThreadMeta[messageYear]:
-              if ThreadMeta[messageYear][threadId].messageSubject in messageSubject:
-                   # Chain this message at the end of the thread
-                   MessageMeta[messageId].messageThread = threadId
-                   tailId = ThreadMeta[messageYear][threadId].tailId
-                   MessageMeta[messageId].messageThreadPrev = tailId
-                   MessageMeta[tailId].messageThreadNext = messageId
-                   ThreadMeta[messageYear][threadId].tailId = messageId
-                   break
-
-         if MessageMeta[messageId].messageThread == messageId:
-              # Create new thread for this message
-              ThreadMeta[messageYear][messageId].messageSubject = messageSubject
-              ThreadMeta[messageYear][messageId].tailId = messageId
-
          archiveYahooMessage(fileName, archiveDir, messageYear, 'utf-8')
 else:
      sys.exit('Please run archive-group.py first')
