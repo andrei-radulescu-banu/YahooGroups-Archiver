@@ -160,23 +160,31 @@ def loadYahooMessage(fileName, format):
     messageBody = getEmailBody(message)
 
     messageYear = Messages[messageId].messageYear
-    thread = Messages[messageId].messageThread
-    threadPrev = Messages[messageId].messageThreadPrev
-    threadNext = Messages[messageId].messageThreadNext
+    messageDatePrev = Messages[messageId].messageDatePrev
+    messageDateNext = Messages[messageId].messageDateNext
+    messageThread = Messages[messageId].messageThread
+    messageThreadPrev = Messages[messageId].messageThreadPrev
+    messageThreadNext = Messages[messageId].messageThreadNext
     
     messageText =  ""
-    messageText += "[Date prev]"
-    messageText += "[Date next]"
-    if threadPrev:
-         messageText += "[<a href='{}.html'>Thread prev</a>]".format(threadPrev)
+    if messageDatePrev:
+         messageText += "[<a href='{}.html'>Date prev</a>]".format(messageDatePrev)
+    else:
+         messageText += "[Date prev]"
+    if messageDateNext:
+         messageText += "[<a href='{}.html'>Date next</a>]".format(messageDateNext)
+    else:
+         messageText += "[Date next]"
+    if messageThreadPrev:
+         messageText += "[<a href='{}.html'>Thread prev</a>]".format(messageThreadPrev)
     else:
          messageText += "[Thread prev]"
-    if threadNext:
-         messageText += "[<a href='{}.html'>Thread next</a>]".format(threadNext)
+    if messageThreadNext:
+         messageText += "[<a href='{}.html'>Thread next</a>]".format(messageThreadNext)
     else:
          messageText += "[Thread next]"
     messageText += "[Date index]"
-    messageText += "[<a href='threads-{}.html#{}'>Thread index</a>]".format(messageYear, thread)
+    messageText += "[<a href='threads-{}.html#{}'>Thread index</a>]".format(messageYear, messageThread)
     messageText += "<br><br>\n"
     messageText += "<font color='#0033cc'>\n"
     messageText += "Sender: {} ({}) <br>\n".format(cgi.escape(messageSender), cgi.escape(messageDateTime))
@@ -312,6 +320,9 @@ if os.path.exists(groupName):
          if prevMessageId:
               Messages[prevMessageId].messageDateNext = messageId
 
+         # Update the prev message id
+         prevMessageId = messageId        
+              
     for messageId in Messages:
          archiveYahooMessage(messageId, archiveDir, "utf-8")
 
