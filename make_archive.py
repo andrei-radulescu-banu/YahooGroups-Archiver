@@ -31,6 +31,7 @@ from datetime import datetime
 from natsort import natsorted, ns
 import cgi
 from collections import OrderedDict
+import argparse
 
 #To avoid Unicode Issues
 reload(sys)
@@ -230,10 +231,13 @@ def getEmailBody(message):
 
 ## This is where the script starts
 
-if len(sys.argv) < 2:
-     sys.exit("You need to specify your group name")
+parser = argparse.ArgumentParser()
 
-groupName = sys.argv[1]
+parser.add_argument("-g", "--group", help="Name of Yahoo group", required=True)
+
+args = parser.parse_args()
+
+groupName = args.group          
 oldDir = os.getcwd()
 if os.path.exists(groupName):
     archiveDir = os.path.abspath(groupName + "-archive")
