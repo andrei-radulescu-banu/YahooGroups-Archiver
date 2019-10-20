@@ -225,6 +225,7 @@ if os.path.exists(groupName):
          # Save the message metadata
          Messages[messageId] = MessageData()
          Messages[messageId].messageSender = messageSender
+         Messages[messageId].messageTimeStamp = messageTimeStamp
          Messages[messageId].messageYear = messageYear
          Messages[messageId].messageSubject = messageSubject
          Messages[messageId].messageThread = messageId
