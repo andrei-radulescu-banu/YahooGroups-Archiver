@@ -92,12 +92,12 @@ def archiveYahooThreads(year, archiveDir, format):
           f.write("<ul>\n");
 
           for threadId in Threads[year]:
-               f.write(" <li><a href='{}.html'>{}</a>, <em>{}</em>\n".format(threadId, cgi.escape(Messages[threadId].messageSubject), cgi.escape(senderName(Messages[threadId].messageSender))));
+               f.write(" <li><a name='{}'></a><a href='{}.html'>{}</a>, <em>{}</em>\n".format(threadId, threadId, cgi.escape(Messages[threadId].messageSubject), cgi.escape(senderName(Messages[threadId].messageSender))));
                if Messages[threadId].messageThreadNext:
                     messageId = Messages[threadId].messageThreadNext
                     f.write(" <ul>\n");
                     while messageId:
-                         f.write("  <li><a href='{}.html'>{}</a>, <em>{}</em>\n".format(messageId, cgi.escape(Messages[messageId].messageSubject), cgi.escape(senderName(Messages[messageId].messageSender))));
+                         f.write("  <li><a name='{}'></a><a href='{}.html'>{}</a>, <em>{}</em>\n".format(messageId, messageId, cgi.escape(Messages[messageId].messageSubject), cgi.escape(senderName(Messages[messageId].messageSender))));
                          messageId = Messages[messageId].messageThreadNext
                     f.write(" </ul>\n");
                     
