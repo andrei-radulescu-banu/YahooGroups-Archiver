@@ -87,7 +87,7 @@ def archiveYahooThreads(year, archiveDir, format):
 
           # Update the archive file
           f = open(archiveThreadFile, "w")
-          f.write("<style>pre {white-space: pre-wrap;}</style>\n");
+          f.write("<style>pre {white-space: pre-wrap;} .bold{font-weight:bold;}</style>\n");
           f.write("<h1>Threads for {}</h1>\n".format(year));
           f.write("<ul>\n");
 
@@ -97,7 +97,7 @@ def archiveYahooThreads(year, archiveDir, format):
                messageSender = Messages[messageId].messageSender
                messageTimeStamp = Messages[messageId].messageTimeStamp
                messageDateTime = datetime.fromtimestamp(float(messageTimeStamp)).strftime("%b %-d, %Y")
-               f.write(" <li><a name='{}'></a><a href='{}.html'>{}</a>, <em>{} ({})</em>\n".format(threadId, threadId, cgi.escape(messageSubject), cgi.escape(senderName(messageSender)), cgi.escape(messageDateTime)));
+               f.write(" <li><a name='{}'></a><a href='{}.html'>{}</a>, <em><span class='bold'>{}</span> ({})</em>\n".format(threadId, threadId, cgi.escape(messageSubject), cgi.escape(senderName(messageSender)), cgi.escape(messageDateTime)));
                if Messages[threadId].messageThreadNext:
                     messageId = Messages[threadId].messageThreadNext
                     f.write(" <ul>\n");
@@ -106,7 +106,7 @@ def archiveYahooThreads(year, archiveDir, format):
                          messageSender = Messages[messageId].messageSender
                          messageTimeStamp = Messages[messageId].messageTimeStamp
                          messageDateTime = datetime.fromtimestamp(float(messageTimeStamp)).strftime("%b %-d, %Y")
-                         f.write("  <li><a name='{}'></a><a href='{}.html'>{}</a>, <em><bf>{}</bf> ({})</em>\n".format(messageId, messageId, cgi.escape(messageSubject), cgi.escape(senderName(messageSender)), cgi.escape(messageDateTime)));
+                         f.write("  <li><a name='{}'></a><a href='{}.html'>{}</a>, <em><span class='bold'>{}</span> ({})</em>\n".format(messageId, messageId, cgi.escape(messageSubject), cgi.escape(senderName(messageSender)), cgi.escape(messageDateTime)));
                          messageId = Messages[messageId].messageThreadNext
                     f.write(" </ul>\n");
                     
