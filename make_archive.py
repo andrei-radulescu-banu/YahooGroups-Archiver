@@ -126,12 +126,18 @@ def loadYahooMessage(fileName, format):
     messageBody = getEmailBody(message)
 
     messageText =  ""
-    messageText +=  ""
+    messageText += "[Date prev]"
+    messageText += "[Date next]"
+    messageText += "[Thread prev]"
+    messageText += "[Thread next]"
+    messageText += "[Date index]"
+    messageText += "[Thread index]"
+    messageText += "<br><br>\n"
     messageText += "<font color='#0033cc'>\n"
-    messageText += "Sender: " + cgi.escape(messageSender) + "<br>" + "\n"
-    messageText += "At: " + cgi.escape(messageDateTime) + "<br>" + "\n"
-    messageText += "Subject: " + cgi.escape(messageSubject) + "<br>" + "\n"
-    messageText += "<br>" + "\n"
+    messageText += "Sender: " + cgi.escape(messageSender) + "<br>\n"
+    messageText += "At: " + cgi.escape(messageDateTime) + "<br>\n"
+    messageText += "Subject: " + cgi.escape(messageSubject) + "<br>\n"
+    messageText += "<br>\n"
     messageText += "</font>\n"
     messageText += messageBody
     return messageText
