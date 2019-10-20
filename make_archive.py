@@ -39,6 +39,7 @@ sys.setdefaultencoding("utf-8")
 
 Messages = OrderedDict()
 Threads = OrderedDict()
+Senders = OrderedDict()
 
 class MessageData:
      def __init__(self):
@@ -48,6 +49,10 @@ class ThreadData:
      def __init__(self):
           pass
 
+class SenderData:
+     def __init__(self):
+          pass
+     
 def senderName(messageSender):
      # Trim past '<' character, if any
      idx = messageSender.find("<")
@@ -345,6 +350,8 @@ if os.path.exists(groupName):
          # Save the message metadata
          Messages[messageId] = MessageData()
          Messages[messageId].messageSender = messageSender
+         Messages[messageId].messageSenderNext = None
+         Messages[messageId].messageSenderPrev = None
          Messages[messageId].messageTimeStamp = messageTimeStamp
          Messages[messageId].messageYear = messageYear
          Messages[messageId].messageSubject = messageSubject
@@ -384,6 +391,21 @@ if os.path.exists(groupName):
 
          # Update the prev message id
          prevMessageId = messageId        
+
+         #
+         # Author chaining
+         #
+         sn = senderName(messageSender)
+
+         if sn not in Senders:
+              Senders[sn] = SenderData()
+              Senders[sn].headMessageId = messageId
+         else:
+              Messages[Senders[sn].tailMessageId].messageSenderNext = messageId
+              Messages[messageId].messageSenderPrev = Senders[sn].tailMessageId
+              
+         Senders[sn].tailMessageId = messageId
+              
               
     for messageId in Messages:
          archiveYahooMessage(messageId, archiveDir, "utf-8")
