@@ -135,7 +135,7 @@ def archiveYahooThreads(year, archiveDir, format):
     
 def archiveYahooByDate(year, archiveDir, format):
      try:
-          archiveThreadFile = "{}/by-date-{}.html".format(archiveDir, year)
+          archiveThreadFile = "{}/date-index-{}.html".format(archiveDir, year)
 
           # Update the archive file
           f = open(archiveThreadFile, "w")
@@ -146,7 +146,7 @@ def archiveYahooByDate(year, archiveDir, format):
           
           for y in Threads:
                if y != year:
-                    f.write("[<a href='by-date-{}.html'>{}</a>] ".format(y, y))
+                    f.write("[<a href='date-index-{}.html'>{}</a>] ".format(y, y))
                else:
                     f.write("[{}] ".format(y))
           
@@ -249,7 +249,7 @@ def loadYahooMessage(fileName, format):
          messageText += "[<a href='{}.html'>Thread next</a>]".format(messageThreadNext)
     else:
          messageText += "[Thread next]"
-    messageText += "[Date index]"
+    messageText += "[<a href='date-index-{}.html#{}'>Date index</a>]".format(messageYear, messageId)
     messageText += "[<a href='threads-{}.html#{}'>Thread index</a>]".format(messageYear, messageThread)
     messageText += "<br><br>\n"
     messageText += "<font color='#0033cc'>\n"
