@@ -133,12 +133,12 @@ def archiveYahooThreads(year, archiveDir, format):
           f.write("<ul>\n");
 
           for threadId in Threads[year]:
-               f.write(" <li>{}, <em>{}</em>\n".format(Messages[threadId].messageSubject, Messages[threadId].messageSender));
+               f.write(" <li><a href='{}.html'>{}</a>, <em>{}</em>\n".format(threadId, cgi.escape(Messages[threadId].messageSubject), cgi.escape(Messages[threadId].messageSender)));
                if Messages[threadId].messageThreadNext:
                     messageId = Messages[tailId].messageThreadNext
                     f.write(" <ul>\n");
                     while messageId:
-                         f.write("  <li>{}, <em>{}</em>\n".format(Messages[messageId].messageSubject, Messages[messageId].messageSender));
+                         f.write("  <li>{}, <em>{}</em>\n".format(cgi.escape(Messages[messageId].messageSubject), cgi.escape(Messages[messageId].messageSender)));
                          messageId = Messages[messageId].messageThreadNext
                     f.write(" </ul>\n");
                     
