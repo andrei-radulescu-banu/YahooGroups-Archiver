@@ -119,7 +119,7 @@ def loadYahooMessage(fileName, format):
     messageId = jsonDoc["ygData"]["msgId"]
     messageSender = HTMLParser.HTMLParser().unescape(jsonDoc["ygData"]["from"]).decode(format).encode("utf-8")
     messageTimeStamp = jsonDoc["ygData"]["postDate"]
-    messageDateTime = datetime.fromtimestamp(float(messageTimeStamp)).strftime("%Y-%m-%d %H:%M:%S")
+    messageDateTime = datetime.fromtimestamp(float(messageTimeStamp)).strftime("%b %-d, %Y %-I:%M %p")
     messageSubject = HTMLParser.HTMLParser().unescape(jsonDoc["ygData"]["subject"]).decode(format).encode("utf-8")
     messageString = HTMLParser.HTMLParser().unescape(jsonDoc["ygData"]["rawEmail"]).decode(format).encode("utf-8")
     message = email.message_from_string(messageString)
@@ -146,7 +146,7 @@ def loadYahooMessage(fileName, format):
     messageText += "<br><br>\n"
     messageText += "<font color='#0033cc'>\n"
     messageText += "Sender: " + cgi.escape(messageSender) + "<br>\n"
-    messageText += "At: " + cgi.escape(messageDateTime) + "<br>\n"
+    messageText += "On: " + cgi.escape(messageDateTime) + "<br>\n"
     messageText += "Subject: " + cgi.escape(messageSubject) + "<br>\n"
     messageText += "<br>\n"
     messageText += "</font>\n"
