@@ -112,7 +112,7 @@ def archiveYahooMessage(messageId, archiveDir, format):
                return
 
           # Update the archive file
-          f = open(archiveMessageFile, 'a')
+          f = open(archiveMessageFile, 'w')
           if f.tell() == 0:
                f.write("<style>pre {white-space: pre-wrap;}</style>\n");
           f.write(messageText)
@@ -122,6 +122,19 @@ def archiveYahooMessage(messageId, archiveDir, format):
      except Exception as e:
           print('Yahoo Message: {} had an error: {}'.format(filename, e))
 
+def archiveYahooThread(threadId, year, archiveDir, format):
+     try:
+          archiveThreadFile = "{}/thread-{}-{}.html".format(archiveDir, year, threadId, messageId)
+
+          # Update the archive file
+          f = open(archiveThreadFile, 'w')
+          if f.tell() == 0:
+               f.write("<style>pre {white-space: pre-wrap;}</style>\n");
+          f.write(messageText)
+          f.close()
+          
+     except Exception as e:
+          pass
           
 def oldLoadYahooMessage(fileName, format):
     f1 = open(fileName,'r')
@@ -281,6 +294,10 @@ if os.path.exists(groupName):
     for messageId in Messages:
          archiveYahooMessage(messageId, archiveDir, 'utf-8')
 
+    for year in Threads:
+         for threadId in Threads[year]:
+              archiveYahooThread(threadId, year, archiveDir, 'utf8')
+         
 else:
     sys.exit('Please run archive-group.py first')
 
