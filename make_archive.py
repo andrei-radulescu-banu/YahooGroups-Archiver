@@ -145,9 +145,8 @@ def loadYahooMessage(fileName, format):
     messageText += "[<a href='threads-{}.html#{}'>Thread index</a>]".format(messageYear, thread)
     messageText += "<br><br>\n"
     messageText += "<font color='#0033cc'>\n"
-    messageText += "Sender: " + cgi.escape(messageSender) + "<br>\n"
-    messageText += "On: " + cgi.escape(messageDateTime) + "<br>\n"
-    messageText += "Subject: " + cgi.escape(messageSubject) + "<br>\n"
+    messageText += "Sender: {} ({}) <br>\n".format(cgi.escape(messageSender), cgi.escape(messageDateTime))
+    messageText += "Subject: {} <br>\n".format(cgi.escape(messageSubject))
     messageText += "<br>\n"
     messageText += "</font>\n"
     messageText += messageBody
