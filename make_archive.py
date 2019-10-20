@@ -59,6 +59,10 @@ def senderName(messageSender):
      if (idx >= 0):
           messageSender = messageSender[:idx]
 
+     idx = messageSender.find("@")
+     if (idx >= 0):
+          messageSender = messageSender[:idx]
+          
      # Trim trailing spaces, starting quotes and ending quotes
      messageSender = messageSender.rstrip()
      messageSender = messageSender.rstrip('\"')
@@ -112,9 +116,10 @@ def archiveYahooByThread(year, archiveDir, format):
                messageId = threadId
                messageSubject = Messages[messageId].messageSubject
                messageSender = Messages[messageId].messageSender
+               messageSenderName = Messages[messageId].messageSenderName
                messageTimeStamp = Messages[messageId].messageTimeStamp
                #messageDateTime = datetime.fromtimestamp(float(messageTimeStamp)).strftime("%b %-d, %Y")
-               f.write(" <li><a name='{}'></a><a href='{}.html'>{}</a>, <em>{}</em>\n".format(threadId, threadId, cgi.escape(messageSubject), cgi.escape(senderName(messageSender))));
+               f.write(" <li><a name='{}'></a><a href='{}.html'>{}</a>, <em>{}</em>\n".format(threadId, threadId, cgi.escape(messageSubject), cgi.escape(messageSenderName)));
                if Messages[threadId].messageThreadNext:
                     messageId = Messages[threadId].messageThreadNext
                     f.write(" <ul>\n");
@@ -123,7 +128,7 @@ def archiveYahooByThread(year, archiveDir, format):
                          messageSender = Messages[messageId].messageSender
                          messageTimeStamp = Messages[messageId].messageTimeStamp
                          #messageDateTime = datetime.fromtimestamp(float(messageTimeStamp)).strftime("%b %-d, %Y")
-                         f.write("  <li><a name='{}'></a><a href='{}.html'>{}</a>, <em>{}</em>\n".format(messageId, messageId, cgi.escape(messageSubject), cgi.escape(senderName(messageSender))));
+                         f.write("  <li><a name='{}'></a><a href='{}.html'>{}</a>, <em>{}</em>\n".format(messageId, messageId, cgi.escape(messageSubject), cgi.escape(messageSenderName)));
                          messageId = Messages[messageId].messageThreadNext
                     f.write(" </ul>\n");
                     
@@ -163,9 +168,10 @@ def archiveYahooByDate(year, archiveDir, format):
                     continue
                messageSubject = Messages[messageId].messageSubject
                messageSender = Messages[messageId].messageSender
+               messageSenderName = Messages[messageId].messageSenderName
                messageTimeStamp = Messages[messageId].messageTimeStamp
                messageDateTime = datetime.fromtimestamp(float(messageTimeStamp)).strftime("%b %-d, %Y")
-               f.write(" <li><a name='{}'></a><a href='{}.html'>{}</a>, <em>{}</em> ({})\n".format(messageId, messageId, cgi.escape(messageSubject), cgi.escape(senderName(messageSender)), messageDateTime));
+               f.write(" <li><a name='{}'></a><a href='{}.html'>{}</a>, <em>{}</em> ({})\n".format(messageId, messageId, cgi.escape(messageSubject), cgi.escape(messageSenderName), messageDateTime));
                     
           f.write("</ul>\n");
 
@@ -350,6 +356,7 @@ if os.path.exists(groupName):
          # Save the message metadata
          Messages[messageId] = MessageData()
          Messages[messageId].messageSender = messageSender
+         Messages[messageId].messageSenderName = senderName(messageSender)
          Messages[messageId].messageSenderNext = None
          Messages[messageId].messageSenderPrev = None
          Messages[messageId].messageTimeStamp = messageTimeStamp
@@ -395,7 +402,7 @@ if os.path.exists(groupName):
          #
          # Author chaining
          #
-         sn = senderName(messageSender)
+         sn = Messages[messageId].messageSenderName
 
          if sn not in Senders:
               Senders[sn] = SenderData()
