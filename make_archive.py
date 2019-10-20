@@ -92,12 +92,21 @@ def archiveYahooThreads(year, archiveDir, format):
           f.write("<ul>\n");
 
           for threadId in Threads[year]:
-               f.write(" <li><a name='{}'></a><a href='{}.html'>{}</a>, <em>{}</em>\n".format(threadId, threadId, cgi.escape(Messages[threadId].messageSubject), cgi.escape(senderName(Messages[threadId].messageSender))));
+               messageId = threadId
+               messageSubject = Messages[messageId].messageSubject
+               messageSender = Messages[messageId].messageSender
+               messageTimeStamp = Messages[messageId].messageTimeStamp
+               messageDateTime = datetime.fromtimestamp(float(messageTimeStamp)).strftime("%b %-d, %Y")
+               f.write(" <li><a name='{}'></a><a href='{}.html'>{}</a>, <em>{} ({})</em>\n".format(threadId, threadId, cgi.escape(messageSubject), cgi.escape(senderName(messageSender)), cgi.escape(messageDateTime)));
                if Messages[threadId].messageThreadNext:
                     messageId = Messages[threadId].messageThreadNext
                     f.write(" <ul>\n");
                     while messageId:
-                         f.write("  <li><a name='{}'></a><a href='{}.html'>{}</a>, <em>{}</em>\n".format(messageId, messageId, cgi.escape(Messages[messageId].messageSubject), cgi.escape(senderName(Messages[messageId].messageSender))));
+                         messageSubject = Messages[messageId].messageSubject
+                         messageSender = Messages[messageId].messageSender
+                         messageTimeStamp = Messages[messageId].messageTimeStamp
+                         messageDateTime = datetime.fromtimestamp(float(messageTimeStamp)).strftime("%b %-d, %Y")
+                         f.write("  <li><a name='{}'></a><a href='{}.html'>{}</a>, <em>{} ({})</em>\n".format(messageId, messageId, cgi.escape(messageSubject), cgi.escape(senderName(messageSender)), cgi.escape(messageDateTime)));
                          messageId = Messages[messageId].messageThreadNext
                     f.write(" </ul>\n");
                     
