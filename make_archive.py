@@ -96,8 +96,8 @@ def archiveYahooThreads(year, archiveDir, format):
                messageSubject = Messages[messageId].messageSubject
                messageSender = Messages[messageId].messageSender
                messageTimeStamp = Messages[messageId].messageTimeStamp
-               messageDateTime = datetime.fromtimestamp(float(messageTimeStamp)).strftime("%b %-d, %Y")
-               f.write(" <li><a name='{}'></a><a href='{}.html'>{}</a>, <em><span class='bold'>{}</span> ({})</em>\n".format(threadId, threadId, cgi.escape(messageSubject), cgi.escape(senderName(messageSender)), cgi.escape(messageDateTime)));
+               #messageDateTime = datetime.fromtimestamp(float(messageTimeStamp)).strftime("%b %-d, %Y")
+               f.write(" <li><a name='{}'></a><a href='{}.html'>{}</a>, <em>{}</em>\n".format(threadId, threadId, cgi.escape(messageSubject), cgi.escape(senderName(messageSender))));
                if Messages[threadId].messageThreadNext:
                     messageId = Messages[threadId].messageThreadNext
                     f.write(" <ul>\n");
@@ -105,8 +105,8 @@ def archiveYahooThreads(year, archiveDir, format):
                          messageSubject = Messages[messageId].messageSubject
                          messageSender = Messages[messageId].messageSender
                          messageTimeStamp = Messages[messageId].messageTimeStamp
-                         messageDateTime = datetime.fromtimestamp(float(messageTimeStamp)).strftime("%b %-d, %Y")
-                         f.write("  <li><a name='{}'></a><a href='{}.html'>{}</a>, <em><span class='bold'>{}</span> ({})</em>\n".format(messageId, messageId, cgi.escape(messageSubject), cgi.escape(senderName(messageSender)), cgi.escape(messageDateTime)));
+                         #messageDateTime = datetime.fromtimestamp(float(messageTimeStamp)).strftime("%b %-d, %Y")
+                         f.write("  <li><a name='{}'></a><a href='{}.html'>{}</a>, <em>{}</em>\n".format(messageId, messageId, cgi.escape(messageSubject), cgi.escape(senderName(messageSender))));
                          messageId = Messages[messageId].messageThreadNext
                     f.write(" </ul>\n");
                     
