@@ -245,14 +245,16 @@ args = parser.parse_args()
 groupName = args.group
 skipYears = args.skip_year
 
-print(skipYears)
-
 oldDir = os.getcwd()
 if os.path.exists(groupName):
     archiveDir = os.path.abspath(groupName + "-archive")
     if not os.path.exists(archiveDir):
          os.makedirs(archiveDir)
     os.chdir(groupName)
+
+    # Track the previous message id
+    prevMessageId = None
+
     for fileName in natsorted(os.listdir(os.getcwd())):
          messageId, messageSender, messageTimeStamp, messageSubject = getYahooMessages(fileName, "utf-8")
          if not messageId or not messageSender or not messageTimeStamp or not messageSubject:
@@ -279,9 +281,14 @@ if os.path.exists(groupName):
          Messages[messageId].messageThread = messageId
          Messages[messageId].messageThreadNext = None
          Messages[messageId].messageThreadPrev = None
-
+         Messages[messageId].messageDateNext = None
+         Messages[messageId].messageDatePrev = prevMessageId
+         
+         #
+         # Thread chaining
+         #
          if messageYear not in Threads:
-              Threads[messageYear]={}
+              Threads[messageYear] = OrderedDict()
 
          for threadId in Threads[messageYear]:
               if Threads[messageYear][threadId].messageSubject in messageSubject:
@@ -299,6 +306,12 @@ if os.path.exists(groupName):
               Threads[messageYear][messageId].messageSubject = messageSubject
               Threads[messageYear][messageId].tailId = messageId
          
+         #
+         # Date chaining
+         #
+         if prevMessageId:
+              Messages[prevMessageId].messageDateNext = messageId
+
     for messageId in Messages:
          archiveYahooMessage(messageId, archiveDir, "utf-8")
 
