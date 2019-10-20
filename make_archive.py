@@ -79,7 +79,7 @@ def archiveYahooMessage(messageId, archiveDir, format):
           
           print("Yahoo Message: {} archived to: {}.html".format(fileName, messageId))               
      except Exception as e:
-          print("Yahoo Message: {} had an error: {}".format(filename, e))
+          print("Yahoo Message: {} had an error: {}".format(fileName, e))
 
 def archiveYahooThreads(year, archiveDir, format):
      try:
@@ -125,13 +125,18 @@ def loadYahooMessage(fileName, format):
     message = email.message_from_string(messageString)
     messageBody = getEmailBody(message)
 
+    messageYear = Messages[messageId].messageYear
+    thread = Messages[messageId].messageThread
+    threadPrev = Messages[messageId].messageThreadPrev
+    threadNext = Messages[messageId].messageThreadNext
+    
     messageText =  ""
     messageText += "[Date prev]"
     messageText += "[Date next]"
     messageText += "[Thread prev]"
     messageText += "[Thread next]"
     messageText += "[Date index]"
-    messageText += "[Thread index]"
+    messageText += "[<a href='threads-{}.html#{}'>Thread index</a>]".format(messageYear, thread)
     messageText += "<br><br>\n"
     messageText += "<font color='#0033cc'>\n"
     messageText += "Sender: " + cgi.escape(messageSender) + "<br>\n"
