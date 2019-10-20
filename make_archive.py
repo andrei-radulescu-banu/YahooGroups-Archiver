@@ -69,7 +69,10 @@ def senderName(messageSender):
      messageSender = messageSender.lstrip('\"')
 
      return messageSender
-          
+
+def senderIndexFileName(messageSenderName):
+     return messageSenderName.replace(" ", "_")
+
 def archiveYahooMessage(messageId, archiveDir, format):
      try:
           fileName = "{}.json".format(messageId)
@@ -184,9 +187,12 @@ def archiveYahooByDate(year, archiveDir, format):
      except Exception as e:
           print("Yahoo Message: {} had an error: {}".format(archiveDateFile, e))
 
-def archiveYahooBySender(messageSenderName, archiveDir, format):
+def archiveYahooBySender(messageSenderIndexFileName, archiveDir, format):
      try:
-          archiveSenderFile = "{}/sender-index-{}.html".format(archiveDir, messageSenderName.replace(" ", "_"))
+          archiveSenderFile = "{}/sender-index-{}.html".format(archiveDir, messageSenderIndexFileName)
+
+          messageId = Senders[messageSenderIndexFileName].headMessageId
+          messageSenderName = Messages[messageId].messageSenderName
 
           # Update the archive file
           f = open(archiveSenderFile, "w")
@@ -195,11 +201,10 @@ def archiveYahooBySender(messageSenderName, archiveDir, format):
 
           f.write("<ul>\n");
 
-          messageId = Senders[messageSenderName].headMessageId
-
           while messageId:
                messageSubject = Messages[messageId].messageSubject
                messageSender = Messages[messageId].messageSender
+               messageSenderName = Messages[messageId].messageSenderName
                messageTimeStamp = Messages[messageId].messageTimeStamp
                messageDateTime = datetime.fromtimestamp(float(messageTimeStamp)).strftime("%b %-d, %Y")
                f.write(" <li><a name='{}'></a><a href='{}.html'>{}</a>, <em>{}</em> ({})\n".format(messageId, messageId, cgi.escape(messageSubject), cgi.escape(messageSenderName), messageDateTime));
@@ -211,7 +216,7 @@ def archiveYahooBySender(messageSenderName, archiveDir, format):
 
           f.close()
 
-          print("Yahoo Thread archived to sender-index-{}.html".format(messageSenderName.replace(" ", "_")))
+          print("Yahoo Thread archived to sender-index-{}.html".format(messageSenderIndexFileName))
 
      except Exception as e:
           print("Yahoo Message: {} had an error: {}".format(archiveSenderFile, e))
@@ -391,6 +396,7 @@ if os.path.exists(groupName):
          Messages[messageId].messageSenderName = senderName(messageSender)
          Messages[messageId].messageSenderNext = None
          Messages[messageId].messageSenderPrev = None
+         Messages[messageId].messageSenderIndexFileName = senderIndexFileName(Messages[messageId].messageSenderName)
          Messages[messageId].messageTimeStamp = messageTimeStamp
          Messages[messageId].messageYear = messageYear
          Messages[messageId].messageSubject = messageSubject
@@ -434,7 +440,7 @@ if os.path.exists(groupName):
          #
          # Author chaining
          #
-         sn = Messages[messageId].messageSenderName
+         sn = Messages[messageId].messageSenderIndexFileName
 
          if sn not in Senders:
               Senders[sn] = SenderData()
