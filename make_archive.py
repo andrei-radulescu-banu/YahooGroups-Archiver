@@ -33,7 +33,7 @@ import cgi
 
 #To avoid Unicode Issues
 reload(sys)
-sys.setdefaultencoding('utf-8')
+sys.setdefaultencoding("utf-8")
 
 Messages = {}
 Threads = {}
@@ -67,26 +67,26 @@ def archiveYahooMessage(messageId, archiveDir, format):
           messageText = loadYahooMessage(fileName, format)
 
           if not messageText:
-               print('Yahoo Message: {} skipped'.format(fileName))
+               print("Yahoo Message: {} skipped".format(fileName))
                return
 
           # Update the archive file
-          f = open(archiveMessageFile, 'w')
+          f = open(archiveMessageFile, "w")
           if f.tell() == 0:
                f.write("<style>pre {white-space: pre-wrap;}</style>\n");
           f.write(messageText)
           f.close()
           
-          print('Yahoo Message: {} archived to: {}.html'.format(fileName, messageId))               
+          print("Yahoo Message: {} archived to: {}.html".format(fileName, messageId))               
      except Exception as e:
-          print('Yahoo Message: {} had an error: {}'.format(filename, e))
+          print("Yahoo Message: {} had an error: {}".format(filename, e))
 
 def archiveYahooThreads(year, archiveDir, format):
      try:
           archiveThreadFile = "{}/threads-{}.html".format(archiveDir, year)
 
           # Update the archive file
-          f = open(archiveThreadFile, 'w')
+          f = open(archiveThreadFile, "w")
           f.write("<style>pre {white-space: pre-wrap;}</style>\n");
           f.write("<h1>Threads for {}</h1>\n".format(year));
           f.write("<ul>\n");
@@ -105,80 +105,80 @@ def archiveYahooThreads(year, archiveDir, format):
           f.close()
           
      except Exception as e:
-          print('Yahoo Message: {} had an error: {}'.format(archiveThreadFile, e))
+          print("Yahoo Message: {} had an error: {}".format(archiveThreadFile, e))
     
 def loadYahooMessage(fileName, format):
-    f1 = open(fileName,'r')
+    f1 = open(fileName,"r")
     fileContents=f1.read()
     f1.close()
     jsonDoc = json.loads(fileContents)
     
-    if 'ygData' not in jsonDoc:
+    if "ygData" not in jsonDoc:
          return None
     
-    messageId = jsonDoc['ygData']['msgId']
-    messageSender = HTMLParser.HTMLParser().unescape(jsonDoc['ygData']['from']).decode(format).encode('utf-8')
-    messageTimeStamp = jsonDoc['ygData']['postDate']
-    messageDateTime = datetime.fromtimestamp(float(messageTimeStamp)).strftime('%Y-%m-%d %H:%M:%S')
-    messageSubject = HTMLParser.HTMLParser().unescape(jsonDoc['ygData']['subject']).decode(format).encode('utf-8')
-    messageString = HTMLParser.HTMLParser().unescape(jsonDoc['ygData']['rawEmail']).decode(format).encode('utf-8')
+    messageId = jsonDoc["ygData"]["msgId"]
+    messageSender = HTMLParser.HTMLParser().unescape(jsonDoc["ygData"]["from"]).decode(format).encode("utf-8")
+    messageTimeStamp = jsonDoc["ygData"]["postDate"]
+    messageDateTime = datetime.fromtimestamp(float(messageTimeStamp)).strftime("%Y-%m-%d %H:%M:%S")
+    messageSubject = HTMLParser.HTMLParser().unescape(jsonDoc["ygData"]["subject"]).decode(format).encode("utf-8")
+    messageString = HTMLParser.HTMLParser().unescape(jsonDoc["ygData"]["rawEmail"]).decode(format).encode("utf-8")
     message = email.message_from_string(messageString)
     messageBody = getEmailBody(message)
 
-    messageText =  ''
-    messageText += '<font color="#0033cc">\n'
-    messageText += 'Sender: ' + cgi.escape(messageSender) + '<br>' + "\n"
-    messageText += 'At: ' + cgi.escape(messageDateTime) + '<br>' + "\n"
-    messageText += 'Subject: ' + cgi.escape(messageSubject) + '<br>' + "\n"
-    messageText += '<br>' + "\n"
-    messageText += '</font>\n'
+    messageText =  ""
+    messageText +=  ""
+    messageText += "<font color='#0033cc'>\n"
+    messageText += "Sender: " + cgi.escape(messageSender) + "<br>" + "\n"
+    messageText += "At: " + cgi.escape(messageDateTime) + "<br>" + "\n"
+    messageText += "Subject: " + cgi.escape(messageSubject) + "<br>" + "\n"
+    messageText += "<br>" + "\n"
+    messageText += "</font>\n"
     messageText += messageBody
-    messageText += '<br><br><br><br><br>' + "\n"
     return messageText
     
 def getYahooMessages(fileName, format):
-    f1 = open(fileName,'r')
+    f1 = open(fileName,"r")
     fileContents=f1.read()
     f1.close()
 
     try:
          jsonDoc = json.loads(fileContents)
-         if 'ygData' not in jsonDoc or 'postDate' not in jsonDoc['ygData']:
+         if "ygData" not in jsonDoc or "postDate" not in jsonDoc["ygData"]:
               return None, None, None, None
 
-         messageId = jsonDoc['ygData']['msgId']
-         messageSender = HTMLParser.HTMLParser().unescape(jsonDoc['ygData']['from']).decode(format).encode('utf-8')
-         messageTimeStamp = jsonDoc['ygData']['postDate']
-         messageSubject = HTMLParser.HTMLParser().unescape(jsonDoc['ygData']['subject']).decode(format).encode('utf-8')
+         messageId = jsonDoc["ygData"]["msgId"]
+         messageSender = HTMLParser.HTMLParser().unescape(jsonDoc["ygData"]["from"]).decode(format).encode("utf-8")
+         messageTimeStamp = jsonDoc["ygData"]["postDate"]
+         messageSubject = HTMLParser.HTMLParser().unescape(jsonDoc["ygData"]["subject"]).decode(format).encode("utf-8")
          
          return messageId, messageSender, datetime.fromtimestamp(float(messageTimeStamp)).year, messageSubject
     except Exception as e:
-         print('Yahoo Message: {} had an error: {}'.format(fileName, e))
+         print("Yahoo Message: {} had an error: {}".format(fileName, e))
 
     return None, None, None, None
 
 # Thank you to the help in this forum for the bulk of this function
 # https://stackoverflow.com/questions/17874360/python-how-to-parse-the-body-from-a-raw-email-given-that-raw-email-does-not
 def getEmailBody(message):
-    body = ''
+    body = ""
     if message.is_multipart():
         for part in message.walk():
             ctype = part.get_content_type()
-            cdispo = str(part.get('Content-Disposition'))
+            cdispo = str(part.get("Content-Disposition"))
 
             # skip any text/plain (txt) attachments
-            if ctype == 'text/plain' and 'attachment' not in cdispo:
-                body += '<pre>'
+            if ctype == "text/plain" and "attachment" not in cdispo:
+                body += "<pre>"
                 body += cgi.escape(part.get_payload(decode=True))  # decode
-                body += '</pre>'
+                body += "</pre>"
                 break
     # not multipart - i.e. plain text, no attachments, keeping fingers crossed
     else:
         ctype = message.get_content_type()
-        if ctype != 'text/html':
-             body += '<pre>'
+        if ctype != "text/html":
+             body += "<pre>"
              body += cgi.escape(message.get_payload(decode=True))
-             body += '</pre>'
+             body += "</pre>"
         else:
              body += message.get_payload(decode=True)
     return body
@@ -186,19 +186,19 @@ def getEmailBody(message):
 ## This is where the script starts
 
 if len(sys.argv) < 2:
-     sys.exit('You need to specify your group name')
+     sys.exit("You need to specify your group name")
 
 groupName = sys.argv[1]
 oldDir = os.getcwd()
 if os.path.exists(groupName):
-    archiveDir = os.path.abspath(groupName + '-archive')
+    archiveDir = os.path.abspath(groupName + "-archive")
     if not os.path.exists(archiveDir):
          os.makedirs(archiveDir)
     os.chdir(groupName)
     for fileName in natsorted(os.listdir(os.getcwd())):
-         messageId, messageSender, messageYear, messageSubject = getYahooMessages(fileName, 'utf-8')
+         messageId, messageSender, messageYear, messageSubject = getYahooMessages(fileName, "utf-8")
          if not messageId or not messageSender or not messageYear or messageYear== "1970" or not messageSubject:
-              print('Yahoo Message: {} had an error (messageId={}, messageSender={}, messageYear={}, messageSubject={})'.format(fileName, messageId, messageSender, messageYear, messageSubject))
+              print("Yahoo Message: {} had an error (messageId={}, messageSender={}, messageYear={}, messageSubject={})".format(fileName, messageId, messageSender, messageYear, messageSubject))
               continue
 
          # Save the message metadata
@@ -230,15 +230,15 @@ if os.path.exists(groupName):
               Threads[messageYear][messageId].tailId = messageId
          
     for messageId in Messages:
-         archiveYahooMessage(messageId, archiveDir, 'utf-8')
+         archiveYahooMessage(messageId, archiveDir, "utf-8")
 
     for year in Threads:
-         archiveYahooThreads(year, archiveDir, 'utf8')
+         archiveYahooThreads(year, archiveDir, "utf8")
          
 else:
-    sys.exit('Please run archive-group.py first')
+    sys.exit("Please run archive-group.py first")
 
 os.chdir(oldDir)
-print('Complete')
+print("Complete")
 
 
