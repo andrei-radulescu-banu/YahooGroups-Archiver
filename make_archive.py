@@ -46,6 +46,19 @@ class ThreadData:
      def __init__(self):
           pass
 
+def senderName(messageSender):
+     # Trim past '<' character, if any
+     idx = messageSender.find("<")
+     if (idx >= 0):
+          messageSender = messageSender[:idx]
+
+     # Trim trailing spaces, starting quotes and ending quotes
+     messageSender = messageSender.rstrip()
+     messageSender = messageSender.rstrip('\"')
+     messageSender = messageSender.lstrip('\"')
+
+     return messageSender
+          
 def archiveYahooMessage(messageId, archiveDir, format):
      try:
           fileName = "{}.json".format(messageId)
@@ -79,12 +92,12 @@ def archiveYahooThreads(year, archiveDir, format):
           f.write("<ul>\n");
 
           for threadId in Threads[year]:
-               f.write(" <li><a href='{}.html'>{}</a>, <em>{}</em>\n".format(threadId, cgi.escape(Messages[threadId].messageSubject), cgi.escape(Messages[threadId].messageSender)));
+               f.write(" <li><a href='{}.html'>{}</a>, <em>{}</em>\n".format(threadId, cgi.escape(Messages[threadId].messageSubject), cgi.escape(senderName(Messages[threadId].messageSender))));
                if Messages[threadId].messageThreadNext:
                     messageId = Messages[threadId].messageThreadNext
                     f.write(" <ul>\n");
                     while messageId:
-                         f.write("  <li><a href='{}.html'>{}</a>, <em>{}</em>\n".format(messageId, cgi.escape(Messages[messageId].messageSubject), cgi.escape(Messages[messageId].messageSender)));
+                         f.write("  <li><a href='{}.html'>{}</a>, <em>{}</em>\n".format(messageId, cgi.escape(Messages[messageId].messageSubject), cgi.escape(senderName(Messages[messageId].messageSender))));
                          messageId = Messages[messageId].messageThreadNext
                     f.write(" </ul>\n");
                     
