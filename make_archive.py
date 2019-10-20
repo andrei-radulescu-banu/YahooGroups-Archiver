@@ -114,7 +114,9 @@ def archiveYahooThreads(year, archiveDir, format):
                     
           f.write("</ul>\n");
           f.close()
-          
+
+          print("Yahoo Thread archived to threads-{}.html".format(year))
+
      except Exception as e:
           print("Yahoo Message: {} had an error: {}".format(archiveThreadFile, e))
     
@@ -134,6 +136,8 @@ def archiveYahooIndex(archiveDir, format):
           f.write("</ul>\n");
           f.close()
           
+          print("Yahoo Index archived to index.html")
+
      except Exception as e:
           print("Archive index had an error: {}".format(archiveIndexFile, e))
     
@@ -234,10 +238,15 @@ def getEmailBody(message):
 parser = argparse.ArgumentParser()
 
 parser.add_argument("-g", "--group", help="Name of Yahoo group", required=True)
+parser.add_argument("--skip-year", help="Skip year", action='append', nargs='+')
 
 args = parser.parse_args()
 
-groupName = args.group          
+groupName = args.group
+skipYears = args.skip_year
+
+print(skipYears)
+
 oldDir = os.getcwd()
 if os.path.exists(groupName):
     archiveDir = os.path.abspath(groupName + "-archive")
@@ -251,8 +260,14 @@ if os.path.exists(groupName):
               continue
          
          messageYear = datetime.fromtimestamp(float(messageTimeStamp)).year
-         if messageYear == "1970":
-              print("Yahoo Message: {} had an invalid message year {}".format(fileName, messageYear))
+         skip = False
+         for skipYearsGroup in skipYears:
+              if str(messageYear) in skipYearsGroup:
+                   print("Yahoo Message: {} skipped, message year {}".format(fileName, messageYear))
+                   skip = True
+                   break
+
+         if skip:
               continue
          
          # Save the message metadata
