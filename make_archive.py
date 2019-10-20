@@ -160,7 +160,7 @@ def archiveYahooByDate(year, archiveDir, format):
                messageSender = Messages[messageId].messageSender
                messageTimeStamp = Messages[messageId].messageTimeStamp
                messageDateTime = datetime.fromtimestamp(float(messageTimeStamp)).strftime("%b %-d, %Y")
-               f.write(" <li><a name='{}'></a><a href='{}.html'>{}</a>, <em>{}</em> ({})\n".format(threadId, threadId, cgi.escape(messageSubject), cgi.escape(senderName(messageSender)), messageDateTime));
+               f.write(" <li><a name='{}'></a><a href='{}.html'>{}</a>, <em>{}</em> ({})\n".format(messageId, messageId, cgi.escape(messageSubject), cgi.escape(senderName(messageSender)), messageDateTime));
                     
           f.write("</ul>\n");
 
