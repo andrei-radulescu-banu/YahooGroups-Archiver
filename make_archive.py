@@ -167,7 +167,7 @@ def getYahooMessages(fileName, format):
          messageTimeStamp = jsonDoc["ygData"]["postDate"]
          messageSubject = HTMLParser.HTMLParser().unescape(jsonDoc["ygData"]["subject"]).decode(format).encode("utf-8")
          
-         return messageId, messageSender, datetime.fromtimestamp(float(messageTimeStamp)).year, messageSubject
+         return messageId, messageSender, messageTimeStamp, messageSubject
     except Exception as e:
          print("Yahoo Message: {} had an error: {}".format(fileName, e))
 
@@ -212,11 +212,16 @@ if os.path.exists(groupName):
          os.makedirs(archiveDir)
     os.chdir(groupName)
     for fileName in natsorted(os.listdir(os.getcwd())):
-         messageId, messageSender, messageYear, messageSubject = getYahooMessages(fileName, "utf-8")
-         if not messageId or not messageSender or not messageYear or messageYear== "1970" or not messageSubject:
-              print("Yahoo Message: {} had an error (messageId={}, messageSender={}, messageYear={}, messageSubject={})".format(fileName, messageId, messageSender, messageYear, messageSubject))
+         messageId, messageSender, messageTimeStamp, messageSubject = getYahooMessages(fileName, "utf-8")
+         if not messageId or not messageSender or not messageTimeStamp or not messageSubject:
+              print("Yahoo Message: {} had an error (messageId={}, messageSender={}, messageTimeStamp={}, messageSubject={})".format(fileName, messageId, messageSender, messageTimeStamp, messageSubject))
               continue
-
+         
+         messageYear = datetime.fromtimestamp(float(messageTimeStamp)).year
+         if messageYear == "1970":
+              print("Yahoo Message: {} had an invalid message year {}".format(fileName, messageYear))
+              continue
+         
          # Save the message metadata
          Messages[messageId] = MessageData()
          Messages[messageId].messageSender = messageSender
