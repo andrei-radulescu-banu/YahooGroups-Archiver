@@ -133,8 +133,14 @@ def loadYahooMessage(fileName, format):
     messageText =  ""
     messageText += "[Date prev]"
     messageText += "[Date next]"
-    messageText += "[Thread prev]"
-    messageText += "[Thread next]"
+    if threadPrev:
+         messageText += "[<a href='{}.html'>Thread prev</a>]".format(threadPrev)
+    else:
+         messageText += "[Thread prev]"
+    if threadNext:
+         messageText += "[<a href='{}.html'>Thread next</a>]".format(threadNext)
+    else:
+         messageText += "[Thread next]"
     messageText += "[Date index]"
     messageText += "[<a href='threads-{}.html#{}'>Thread index</a>]".format(messageYear, thread)
     messageText += "<br><br>\n"
