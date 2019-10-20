@@ -30,13 +30,14 @@ import sys
 from datetime import datetime
 from natsort import natsorted, ns
 import cgi
+from collections import OrderedDict
 
 #To avoid Unicode Issues
 reload(sys)
 sys.setdefaultencoding("utf-8")
 
-Messages = {}
-Threads = {}
+Messages = OrderedDict()
+Threads = OrderedDict()
 
 class MessageData:
      def __init__(self):
@@ -87,8 +88,8 @@ def archiveYahooThreads(year, archiveDir, format):
 
           # Update the archive file
           f = open(archiveThreadFile, "w")
-          f.write("<style>pre {white-space: pre-wrap;} .bold{font-weight:bold;}</style>\n");
-          f.write("<h1>Threads for {}</h1>\n".format(year));
+          f.write("<style>pre {white-space: pre-wrap;}</style>\n");
+          f.write("<h3>{}@yahoogroups.com threads in {} [<a href='index.html'>Other Years</a>]</h3>\n".format(groupName, year));
           f.write("<ul>\n");
 
           for threadId in Threads[year]:
@@ -115,6 +116,25 @@ def archiveYahooThreads(year, archiveDir, format):
           
      except Exception as e:
           print("Yahoo Message: {} had an error: {}".format(archiveThreadFile, e))
+    
+def archiveYahooIndex(archiveDir, format):
+     try:
+          archiveIndexFile = "{}/index.html".format(archiveDir)
+
+          # Update the archive file
+          f = open(archiveIndexFile, "w")
+          f.write("<style>pre {white-space: pre-wrap;}</style>\n");
+          f.write("<h3>The {}@yahoogroups.com Archive</h3>\n".format(groupName));
+          f.write("<ul>\n");
+
+          for year in Threads:
+               f.write(" <li><a href='threads-{}.html'>Threads in {}</a>\n".format(year, year))
+
+          f.write("</ul>\n");
+          f.close()
+          
+     except Exception as e:
+          print("Archive index had an error: {}".format(archiveIndexFile, e))
     
 def loadYahooMessage(fileName, format):
     f1 = open(fileName,"r")
@@ -265,6 +285,8 @@ if os.path.exists(groupName):
 
     for year in Threads:
          archiveYahooThreads(year, archiveDir, "utf8")
+
+    archiveYahooIndex(archiveDir, "utf8")
          
 else:
     sys.exit("Please run archive-group.py first")
