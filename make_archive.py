@@ -106,7 +106,7 @@ def archiveYahooThreads(year, archiveDir, format):
                          messageSender = Messages[messageId].messageSender
                          messageTimeStamp = Messages[messageId].messageTimeStamp
                          messageDateTime = datetime.fromtimestamp(float(messageTimeStamp)).strftime("%b %-d, %Y")
-                         f.write("  <li><a name='{}'></a><a href='{}.html'>{}</a>, <em>{} ({})</em>\n".format(messageId, messageId, cgi.escape(messageSubject), cgi.escape(senderName(messageSender)), cgi.escape(messageDateTime)));
+                         f.write("  <li><a name='{}'></a><a href='{}.html'>{}</a>, <em><bf>{}</bf> ({})</em>\n".format(messageId, messageId, cgi.escape(messageSubject), cgi.escape(senderName(messageSender)), cgi.escape(messageDateTime)));
                          messageId = Messages[messageId].messageThreadNext
                     f.write(" </ul>\n");
                     
