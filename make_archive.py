@@ -83,7 +83,7 @@ def archiveYahooMessage(messageId, archiveDir, format):
      except Exception as e:
           print("Yahoo Message: {} had an error: {}".format(fileName, e))
 
-def archiveYahooThreads(year, archiveDir, format):
+def archiveYahooByThread(year, archiveDir, format):
      try:
           archiveThreadFile = "{}/thread-index-{}.html".format(archiveDir, year)
 
@@ -135,10 +135,10 @@ def archiveYahooThreads(year, archiveDir, format):
     
 def archiveYahooByDate(year, archiveDir, format):
      try:
-          archiveThreadFile = "{}/date-index-{}.html".format(archiveDir, year)
+          archiveDateFile = "{}/date-index-{}.html".format(archiveDir, year)
 
           # Update the archive file
-          f = open(archiveThreadFile, "w")
+          f = open(archiveDateFile, "w")
           f.write("<style>pre {white-space: pre-wrap;}</style>\n");
           f.write("<h3>{}@yahoogroups.com messages by date in {}</h3>\n".format(groupName, year));
 
@@ -197,7 +197,6 @@ def archiveYahooIndex(archiveDir, format):
                f.write(" <li><a href='thread-index-{}.html'>Threads in {}</a>\n".format(year, year))
 
           f.write("</ul>\n");
-          f.write("<br>\n");
           f.write("<ul>\n");
 
           for year in Threads:
@@ -400,7 +399,7 @@ if os.path.exists(groupName):
          archiveYahooMessage(messageId, archiveDir, "utf-8")
 
     for year in Threads:
-         archiveYahooThreads(year, archiveDir, "utf8")
+         archiveYahooByThread(year, archiveDir, "utf8")
          archiveYahooByDate(year, archiveDir, "utf8")
 
     archiveYahooIndex(archiveDir, "utf8")
