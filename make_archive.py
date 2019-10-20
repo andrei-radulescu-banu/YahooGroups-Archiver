@@ -35,7 +35,6 @@ import cgi
 reload(sys)
 sys.setdefaultencoding('utf-8')
 
-OldThreads = {}
 Messages = {}
 Threads = {}
 
@@ -46,60 +45,7 @@ class MessageData:
 class ThreadData:
      def __init__(self):
           pass
-     
-def oldArchiveYahooMessage(fileName, archiveDir, messageYear, format):
-     global OldThreads
 
-     try:
-          archiveYear = archiveDir + '/oldarchive-' + str(messageYear) + '.html'
-          threadsYear = archiveDir + '/oldthreads-' + str(messageYear) + '.html'
-          
-          messageId, messageSender, messageDateTime, messageSubject, messageText = oldLoadYahooMessage(fileName, format)
-
-          if not messageText:
-               print('Yahoo Message: {} skipped'.format(fileName))
-               return
-
-          # Update the archive file
-          f = open(archiveYear, 'a')
-          if f.tell() == 0:
-               f.write("<style>pre {white-space: pre-wrap;}</style>\n");
-          f.write(messageText)
-          f.close()
-          
-          print('Yahoo Message: {} archived to: archive-{}.html'.format(fileName, messageYear))
-
-          # Update the threads file
-          if archiveYear not in OldThreads:
-               OldThreads[archiveYear]={}
-
-          threadFound = False               
-          for thread in OldThreads[archiveYear]:
-               if thread in messageSubject:
-                    threadFound = True
-
-          f = open(threadsYear, 'a')
-          if f.tell() == 0:
-               f.write("<style>pre {white-space: pre-wrap;}</style>\n");
-                    
-          threadsText = ''
-          if not threadFound:
-               OldThreads[archiveYear][messageSubject] = 1
-          else:
-               OldThreads[archiveYear][thread] += 1
-               threadsText += '&nbsp;&nbsp;' 
-
-          threadsText += '<a href="oldarchive-{}.html#{}">'.format(messageYear, messageId) + cgi.escape(messageSubject) + '</a>, by ' 
-          threadsText += cgi.escape(messageSender) + ' at ' 
-          threadsText += cgi.escape(messageDateTime) + '<br>\n' 
-               
-          f.write(threadsText)
-          f.close()
-               
-     except Exception as e:
-          print('Yahoo Message: {} had an error: {}'.format(filename, e))
-
-          
 def archiveYahooMessage(messageId, archiveDir, format):
      try:
           fileName = "{}.json".format(messageId)
@@ -147,37 +93,6 @@ def archiveYahooThreads(year, archiveDir, format):
           
      except Exception as e:
           print('Yahoo Message: {} had an error: {}'.format(archiveThreadFile, e))
-          
-def oldLoadYahooMessage(fileName, format):
-    f1 = open(fileName,'r')
-    fileContents=f1.read()
-    f1.close()
-    jsonDoc = json.loads(fileContents)
-    
-    if 'ygData' not in jsonDoc:
-         return None, None, None, None, None
-    
-    messageId = jsonDoc['ygData']['msgId']
-    messageSender = HTMLParser.HTMLParser().unescape(jsonDoc['ygData']['from']).decode(format).encode('utf-8')
-    messageTimeStamp = jsonDoc['ygData']['postDate']
-    messageDateTime = datetime.fromtimestamp(float(messageTimeStamp)).strftime('%Y-%m-%d %H:%M:%S')
-    messageSubject = HTMLParser.HTMLParser().unescape(jsonDoc['ygData']['subject']).decode(format).encode('utf-8')
-    messageString = HTMLParser.HTMLParser().unescape(jsonDoc['ygData']['rawEmail']).decode(format).encode('utf-8')
-    message = email.message_from_string(messageString)
-    messageBody = getEmailBody(message)
-
-    messageText =  ''
-    messageText += '<font color="#0033cc">\n'
-    messageText += '-----------------------------------------------------------------------------------<br>' + "\n"
-    messageText += 'Post ID: ' + str(messageId) + '<a name=\"' + str(messageId) + '\"></a><br>' + "\n"
-    messageText += 'Sender: ' + cgi.escape(messageSender) + '<br>' + "\n"
-    messageText += 'At: ' + cgi.escape(messageDateTime) + '<br>' + "\n"
-    messageText += 'Subject: ' + cgi.escape(messageSubject) + '<br>' + "\n"
-    messageText += '<br>' + "\n"
-    messageText += '</font>\n'
-    messageText += messageBody
-    messageText += '<br><br><br><br><br>' + "\n"
-    return messageId, messageSender, messageDateTime, messageSubject, messageText
     
 def loadYahooMessage(fileName, format):
     f1 = open(fileName,'r')
@@ -301,8 +216,6 @@ if os.path.exists(groupName):
               Threads[messageYear][messageId].messageSubject = messageSubject
               Threads[messageYear][messageId].tailId = messageId
          
-         #oldArchiveYahooMessage(fileName, archiveDir, messageYear, 'utf-8')
-
     for messageId in Messages:
          archiveYahooMessage(messageId, archiveDir, 'utf-8')
 
