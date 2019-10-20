@@ -153,24 +153,14 @@ def archiveYahooByDate(year, archiveDir, format):
           f.write("<br><br>\n");
           f.write("<ul>\n");
 
-          for threadId in Threads[year]:
-               messageId = threadId
+          for messageId in Messages:
+               if Messages[messageId].messageYear != year:
+                    continue
                messageSubject = Messages[messageId].messageSubject
                messageSender = Messages[messageId].messageSender
                messageTimeStamp = Messages[messageId].messageTimeStamp
-               #messageDateTime = datetime.fromtimestamp(float(messageTimeStamp)).strftime("%b %-d, %Y")
-               f.write(" <li><a name='{}'></a><a href='{}.html'>{}</a>, <em>{}</em>\n".format(threadId, threadId, cgi.escape(messageSubject), cgi.escape(senderName(messageSender))));
-               if Messages[threadId].messageThreadNext:
-                    messageId = Messages[threadId].messageThreadNext
-                    f.write(" <ul>\n");
-                    while messageId:
-                         messageSubject = Messages[messageId].messageSubject
-                         messageSender = Messages[messageId].messageSender
-                         messageTimeStamp = Messages[messageId].messageTimeStamp
-                         #messageDateTime = datetime.fromtimestamp(float(messageTimeStamp)).strftime("%b %-d, %Y")
-                         f.write("  <li><a name='{}'></a><a href='{}.html'>{}</a>, <em>{}</em>\n".format(messageId, messageId, cgi.escape(messageSubject), cgi.escape(senderName(messageSender))));
-                         messageId = Messages[messageId].messageThreadNext
-                    f.write(" </ul>\n");
+               messageDateTime = datetime.fromtimestamp(float(messageTimeStamp)).strftime("%b %-d, %Y")
+               f.write(" <li><a name='{}'></a><a href='{}.html'>{}</a>, <em>{}</em> ({})\n".format(threadId, threadId, cgi.escape(messageSubject), cgi.escape(senderName(messageSender)), messageDateTime));
                     
           f.write("</ul>\n");
 
@@ -181,7 +171,7 @@ def archiveYahooByDate(year, archiveDir, format):
           print("Yahoo Thread archived to date-index-{}.html".format(year))
 
      except Exception as e:
-          print("Yahoo Message: {} had an error: {}".format(archiveThreadFile, e))
+          print("Yahoo Message: {} had an error: {}".format(archiveDateFile, e))
     
 def archiveYahooIndex(archiveDir, format):
      try:
