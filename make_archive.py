@@ -122,19 +122,31 @@ def archiveYahooMessage(messageId, archiveDir, format):
      except Exception as e:
           print('Yahoo Message: {} had an error: {}'.format(filename, e))
 
-def archiveYahooThread(threadId, year, archiveDir, format):
+def archiveYahooThreads(year, archiveDir, format):
      try:
-          archiveThreadFile = "{}/thread-{}-{}.html".format(archiveDir, year, threadId, messageId)
+          archiveThreadFile = "{}/threads-{}.html".format(archiveDir, year)
 
           # Update the archive file
           f = open(archiveThreadFile, 'w')
-          if f.tell() == 0:
-               f.write("<style>pre {white-space: pre-wrap;}</style>\n");
-          f.write(messageText)
+          f.write("<style>pre {white-space: pre-wrap;}</style>\n");
+          f.write("<h1>Threads for {}</h1>\n".format(year));
+          f.write("<ul>\n");
+
+          for threadId in Threads[year]:
+               f.write(" <li>{}, <em>{}</em>\n".format(Messages[threadId].messageSubject, Messages[threadId].messageSender));
+               if Messages[threadId].messageThreadNext:
+                    messageId = Messages[tailId].messageThreadNext
+                    f.write(" <ul>\n");
+                    while messageId:
+                         f.write("  <li>{}, <em>{}</em>\n".format(Messages[messageId].messageSubject, Messages[messageId].messageSender));
+                         messageId = Messages[messageId].messageThreadNext
+                    f.write(" </ul>\n");
+                    
+          f.write("</ul>\n");
           f.close()
           
      except Exception as e:
-          pass
+          print('Yahoo Message: {} had an error: {}'.format(archiveThreadFile, e))
           
 def oldLoadYahooMessage(fileName, format):
     f1 = open(fileName,'r')
@@ -295,8 +307,7 @@ if os.path.exists(groupName):
          archiveYahooMessage(messageId, archiveDir, 'utf-8')
 
     for year in Threads:
-         for threadId in Threads[year]:
-              archiveYahooThread(threadId, year, archiveDir, 'utf8')
+         archiveYahooThreads(year, archiveDir, 'utf8')
          
 else:
     sys.exit('Please run archive-group.py first')
